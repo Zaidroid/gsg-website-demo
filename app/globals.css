@@ -1,26 +1,127 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@plugin "tailwindcss-animate";
 
-@theme inline {
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: var(--font-source-sans);
+  --font-heading: var(--font-source-sans);
+  --font-arabic: var(--font-tajawal);
+
+  /* GSG Colors directly mapped to theme semantics */
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+
+  /* Brand Colors */
+  --color-gsg-navy: #1F3036;
+  --color-gsg-teal: #309DC4;
+  --color-gsg-orange: #E78B3F;
+  --color-gsg-red: #DE6336;
+
+  /* Brand Tints (Secondary Colors from Guidelines) */
+  --color-gsg-navy-light: color-mix(in srgb, #1F3036, white 20%);
+  --color-gsg-navy-lighter: color-mix(in srgb, #1F3036, white 40%);
+  --color-gsg-navy-subtle: color-mix(in srgb, #1F3036, white 80%);
+
+  --color-gsg-teal-light: color-mix(in srgb, #309DC4, white 20%);
+  --color-gsg-teal-lighter: color-mix(in srgb, #309DC4, white 40%);
+  --color-gsg-teal-subtle: color-mix(in srgb, #309DC4, white 80%);
+
+  --color-gsg-orange-light: color-mix(in srgb, #E78B3F, white 20%);
+  --color-gsg-orange-lighter: color-mix(in srgb, #E78B3F, white 40%);
+  --color-gsg-orange-subtle: color-mix(in srgb, #E78B3F, white 80%);
+
+  --color-gsg-red-light: color-mix(in srgb, #DE6336, white 20%);
+  --color-gsg-red-lighter: color-mix(in srgb, #DE6336, white 40%);
+  --color-gsg-red-subtle: color-mix(in srgb, #DE6336, white 80%);
+
+  /* Semantic Mappings */
+  --color-secondary: var(--color-gsg-teal);
+  --color-secondary-foreground: #ffffff;
+
+  --color-accent: var(--color-gsg-orange);
+  --color-accent-foreground: #ffffff;
+
+  --color-destructive: var(--color-gsg-red);
+  --color-destructive-foreground: #ffffff;
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+
+  --animate-gradient: gradient 6s linear infinite;
+  --animate-shine: shine 2s linear infinite;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* Keyframes */
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@keyframes shine {
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: translateX(100%);
+  }
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #1F3036;
+
+  --primary: #1F3036;
+  --primary-foreground: #ffffff;
+
+  --card: #ffffff;
+  --card-foreground: #1F3036;
+
+  --particle-color: rgba(57, 80, 119, 0.2);
+}
+
+.dark {
+  --background: #0B1120;
+  /* Deep Navy/Black */
+  --foreground: #E2E8F0;
+  /* Slate 200 */
+
+  --primary: #ffffff;
+  --primary-foreground: #1F3036;
+
+  --card: #16202C;
+  /* Slightly lighter navy for cards */
+  --card-foreground: #E2E8F0;
+
+  --particle-color: rgba(255, 255, 255, 0.1);
+}
+
+@layer base {
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-heading);
+    color: var(--primary);
+  }
 }
