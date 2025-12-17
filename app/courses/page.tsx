@@ -5,7 +5,7 @@ import { courses } from "@/data/courses"
 import { motion, AnimatePresence } from "framer-motion"
 import { Search, X, Calendar, Clock, BarChart } from "lucide-react"
 import { PageHeader } from "@/components/ui/PageHeader"
-import { useOnClickOutside } from "@/hooks/use-on-click-outside" // Need to create this or use simple ref check
+
 
 // Utility hook for click outside (Inline for now if not available)
 function useClickOutside(ref: any, handler: any) {
@@ -95,8 +95,8 @@ export default function CoursesPage() {
                                     <div className="relative z-10">
                                         <div className="flex items-center justify-between mb-4">
                                             <span className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ring-1 ring-inset ${course.status === 'Open' ? 'bg-green-50 text-green-700 ring-green-600/20 dark:bg-green-900/20 dark:text-green-400' :
-                                                    course.status === 'Closed' ? 'bg-red-50 text-red-700 ring-red-600/10 dark:bg-red-900/20 dark:text-red-400' :
-                                                        'bg-gray-50 text-gray-600 ring-gray-500/10 dark:bg-gray-800/20 dark:text-gray-400'
+                                                course.status === 'Closed' ? 'bg-red-50 text-red-700 ring-red-600/10 dark:bg-red-900/20 dark:text-red-400' :
+                                                    'bg-gray-50 text-gray-600 ring-gray-500/10 dark:bg-gray-800/20 dark:text-gray-400'
                                                 }`}>
                                                 {course.status}
                                             </span>
