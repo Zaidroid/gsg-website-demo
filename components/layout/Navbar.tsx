@@ -54,6 +54,7 @@ const navigation = [
     { name: "Programs", href: "/programs" },
     { name: "Courses", href: "/courses" },
     { name: "Events", href: "/events" },
+    { name: "Gallery", href: "/gallery" },
     { name: "Get Involved", href: "/get-involved" },
     { name: "Contact", href: "/contact" },
 ]

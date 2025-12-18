@@ -1,9 +1,10 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { createPortal } from "react-dom"
 import dynamic from "next/dynamic"
-import { motion } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
+import Image from "next/image"
 import { BookOpen, X } from "lucide-react"
 
 const CatalogueViewer = dynamic(() => import("@/components/CatalogueViewer"), {
@@ -18,16 +19,57 @@ const stats = [
     { id: 4, name: "Women Participation", value: "50%" },
 ]
 
+const backgroundImages = [
+    "/images/gallery/GRA_7098.jpg",
+    "/images/gallery/GRA_6393.jpg",
+    "/images/gallery/EVE_0628 (2).jpg",
+];
+
 export function ImpactStats() {
     const [isOpen, setIsOpen] = useState(false);
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+    // Cycle background images
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setCurrentImageIndex((prev) => (prev + 1) % backgroundImages.length);
+        }, 5000);
+        return () => clearInterval(interval);
+    }, []);
+
 
     return (
         <div className="relative pt-12 pb-24 sm:pb-32 overflow-hidden bg-transparent transition-colors duration-300">
+            {/* Background Slideshow removed from here */}
 
             <div className="mx-auto max-w-7xl px-6 lg:px-8 relative z-10">
                 {/* Unified Glass Container for the Section Content */}
-                <div className="rounded-3xl bg-white/20 dark:bg-slate-900/40 backdrop-blur-xl shadow-2xl border border-white/30 dark:border-slate-700/30 p-8 lg:p-12 ring-1 ring-black/5 dark:ring-white/5">
-                    <div className="grid lg:grid-cols-2 gap-16 items-center">
+                <div className="relative overflow-hidden rounded-3xl bg-white/20 dark:bg-slate-900/40 backdrop-blur-xl shadow-2xl border border-white/30 dark:border-slate-700/30 p-8 lg:p-12 ring-1 ring-black/5 dark:ring-white/5">
+                    {/* Background Slideshow moved inside the card */}
+                    <div className="absolute inset-0 z-0 select-none pointer-events-none rounded-3xl overflow-hidden">
+                        <AnimatePresence mode="popLayout">
+                            <motion.div
+                                key={currentImageIndex}
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 0.15 }} // Slightly reduced opacity for inside card
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 1.5 }}
+                                className="absolute inset-0 w-full h-full"
+                            >
+                                <Image
+                                    src={backgroundImages[currentImageIndex]}
+                                    fill
+                                    className="object-cover grayscale contrast-125"
+                                    alt=""
+                                    priority
+                                />
+                                {/* Gradient overlays */}
+                                <div className="absolute inset-0 bg-gradient-to-b from-white/60 via-white/40 to-white/60 dark:from-slate-950/60 dark:via-slate-950/40 dark:to-slate-950/60" />
+                            </motion.div>
+                        </AnimatePresence>
+                    </div>
+
+                    <div className="grid lg:grid-cols-2 gap-16 items-center relative z-10">
                         {/* Left Column: Stats & Impact Text */}
                         <div className="text-left">
                             <motion.h2
@@ -72,42 +114,45 @@ export function ImpactStats() {
                             whileInView={{ opacity: 1, scale: 1, x: 0 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.8, type: "spring", bounce: 0.4 }}
-                            className="flex justify-center lg:justify-end"
+                            className="flex justify-center lg:justify-end perspective-1000"
                         >
                             <div
                                 onClick={() => setIsOpen(true)}
-                                className="group relative cursor-pointer transform hover:scale-105 transition-transform duration-500"
+                                className="group relative cursor-pointer w-[300px] h-[420px] preserve-3d transition-transform duration-500 ease-out hover:-translate-y-4 hover:rotate-y-[-10deg]"
+                                style={{ transformStyle: "preserve-3d" }}
                             >
-                                {/* 3D Book Effect Container - Glass Style */}
-                                <div className="relative w-[280px] h-[400px] rounded-r-lg bg-white/40 dark:bg-slate-900/60 backdrop-blur-md shadow-2xl flex flex-col items-center justify-center border-l-8 border-l-gray-300 dark:border-l-slate-700 overflow-hidden transition-colors duration-300 ring-1 ring-white/20">
-                                    <div className="absolute inset-0 bg-gradient-to-br from-secondary/5 to-transparent pointer-events-none rounded-r-lg" />
+                                {/* --- Pages Effect (Depth) --- */}
+                                {/* These layers create the illusion of pages stacked behind the cover */}
+                                <div className="absolute inset-0 bg-white border border-gray-200 rounded-r-xl shadow-sm translate-z-[-4px] translate-x-[4px] w-[98%] h-[98%] top-[1%] left-[2%]" />
+                                <div className="absolute inset-0 bg-white border border-gray-200 rounded-r-xl shadow-sm translate-z-[-8px] translate-x-[8px] w-[98%] h-[98%] top-[1%] left-[3%]" />
+                                <div className="absolute inset-0 bg-white border border-gray-200 rounded-r-xl shadow-sm translate-z-[-12px] translate-x-[12px] w-[98%] h-[98%] top-[1%] left-[4%]" />
 
-                                    {/* Animated Glow on Hover */}
-                                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:animate-shine" />
+                                {/* --- Main Cover --- */}
+                                <div className="absolute inset-0 bg-white dark:bg-slate-900 rounded-r-xl shadow-2xl overflow-hidden border-l-[12px] border-l-gray-300 dark:border-l-slate-700 flex flex-col justify-between p-8 ring-1 ring-black/5 dark:ring-white/10 group-hover:shadow-[20px_20px_60px_rgba(0,0,0,0.15)] transition-shadow duration-500">
 
-                                    {/* Content on Cover */}
-                                    <div className="p-8 text-center flex flex-col items-center gap-6 relative z-10">
-                                        <div className="w-16 h-16 rounded-full bg-secondary/10 flex items-center justify-center text-primary mb-2 shadow-inner ring-1 ring-white/30">
-                                            <BookOpen size={32} />
+                                    {/* Subtle Texture/Gradient */}
+                                    <div className="absolute inset-0 bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-slate-800 dark:via-slate-900 dark:to-slate-950 opacity-80" />
+                                    <div className="absolute top-0 right-0 w-32 h-32 bg-secondary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+
+                                    {/* Header / Logo */}
+                                    <div className="relative z-10 flex flex-col items-center mt-8">
+                                        <div className="w-20 h-20 rounded-2xl bg-gradient-to-tr from-secondary/10 to-primary/5 flex items-center justify-center mb-6 shadow-inner ring-1 ring-black/5">
+                                            <BookOpen className="w-8 h-8 text-secondary" />
                                         </div>
-                                        <div>
-                                            <h3 className="text-2xl font-bold text-gray-800 dark:text-white transition-colors drop-shadow-sm">Harvest 2025</h3>
-                                            <div className="h-1 w-12 bg-secondary mx-auto my-3" />
-                                            <p className="text-sm text-gray-600 dark:text-gray-300 font-bold tracking-widest uppercase transition-colors">Annual Report</p>
-                                        </div>
+                                        <h3 className="text-3xl font-black text-primary dark:text-white tracking-tight text-center">
+                                            Harvest
+                                            <span className="block text-secondary">2025</span>
+                                        </h3>
                                     </div>
 
-                                    {/* Call to Action Overlay */}
-                                    <div className="absolute inset-x-0 bottom-8 flex justify-center z-20">
-                                        <span className="bg-secondary text-white px-6 py-2 rounded-full font-bold shadow-lg flex items-center gap-2 text-sm group-hover:bg-secondary/90 transition-colors transform group-hover:translate-y-1 hover:shadow-xl">
-                                            Read Full Report <BookOpen size={16} />
-                                        </span>
+                                    {/* Footer / Action */}
+                                    <div className="relative z-10 text-center mb-8">
+                                        <p className="text-xs font-bold tracking-[0.2em] text-gray-400 uppercase mb-6">Annual Report</p>
+                                        <button className="w-full py-3 rounded-lg bg-primary text-white font-bold text-sm shadow-lg group-hover:bg-secondary transition-colors duration-300 flex items-center justify-center gap-2 group-hover:shadow-secondary/25">
+                                            Read Full Report <BookOpen size={14} />
+                                        </button>
                                     </div>
                                 </div>
-
-                                {/* Book Pages decoration - Glassy */}
-                                <div className="absolute top-2 left-3 w-full h-full bg-white/30 dark:bg-slate-800/40 backdrop-blur-sm rounded-r-lg border border-gray-200/50 dark:border-slate-700/50 z-[-1] shadow-md group-hover:translate-x-1 transition-transform" />
-                                <div className="absolute top-4 left-6 w-full h-full bg-white/20 dark:bg-slate-800/20 backdrop-blur-sm rounded-r-lg border border-gray-200/50 dark:border-slate-700/50 z-[-2] shadow-sm group-hover:translate-x-2 transition-transform" />
                             </div>
                         </motion.div>
                     </div>
