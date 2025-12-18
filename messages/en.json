@@ -1,0 +1,428 @@
+{
+    "Navbar": {
+        "about": "About Us",
+        "programs": "Programs",
+        "courses": "Courses",
+        "events": "Events",
+        "gallery": "Gallery",
+        "get-involved": "Get Involved",
+        "contact": "Contact",
+        "donate": "Donate"
+    },
+    "Footer": {
+        "about": "About",
+        "programs": "Programs",
+        "courses": "Courses",
+        "contact": "Contact",
+        "copyright": "© {year} Gaza Sky Geeks."
+    },
+    "HomePage": {
+        "hero": {
+            "badge": "Empowering Palestine's Tech Future",
+            "title_main": "Building a Vibrant",
+            "typewriter": [
+                "Digital Economy",
+                "Tech Ecosystem",
+                "Resilient Future"
+            ],
+            "description": "Gaza Sky Geeks is the leading tech hub in Palestine. We weave a network of freelancers, founders, and coders to build a better future.",
+            "cta_explore": "Explore Programs",
+            "cta_story": "Our Story"
+        },
+        "programs": {
+            "title": "Our Core Programs",
+            "subtitle": "We provide the skills, mentorship, and network you need to succeed in the digital age.",
+            "learn_more": "Learn more",
+            "items": {
+                "elevate": {
+                    "name": "Elevate",
+                    "description": "Helping Palestinian tech companies scale and access global markets."
+                },
+                "individuals": {
+                    "name": "Individuals",
+                    "description": "Training programs and academies for developers and freelancers."
+                },
+                "employability": {
+                    "name": "Employability",
+                    "description": "Connecting our talented graduates with meaningful job opportunities."
+                },
+                "coworking": {
+                    "name": "Co-working spaces",
+                    "description": "Vibrant hubs with high-speed internet and power for the community."
+                }
+            }
+        },
+        "impact": {
+            "title": "Our Impact",
+            "description": "We are driving real economic change through technology and innovation. Explore the stories behind the numbers in our annual report.",
+            "stats": {
+                "graduates": "Graduates Employed",
+                "startups": "Startups Accelerated",
+                "freelance": "Freelance Earnings",
+                "women": "Women Participation"
+            },
+            "catalogue": {
+                "title": "Harvest",
+                "year": "2025",
+                "label": "Annual Report",
+                "cta": "Read Full Report",
+                "loading": "Loading Catalogue..."
+            }
+        }
+    },
+    "AboutPage": {
+        "header": {
+            "title": "About Gaza Sky Geeks",
+            "subtitle": "Whether you are a beginner coder, a freelancer, or a startup founder, we have a path for you."
+        },
+        "philosophy": {
+            "mission": {
+                "title": "Our Mission",
+                "description": "To provide the resources, mentorship, and network needed for Palestinians to participate in the global digital economy."
+            },
+            "vision": {
+                "title": "Our Vision",
+                "description": "A Palestine where any talented individual can build a career or startup that competes globally, regardless of location."
+            },
+            "values": {
+                "title": "Our Values",
+                "items": [
+                    "Community First",
+                    "Pay it Forward",
+                    "Resilience",
+                    "Global Excellence"
+                ]
+            }
+        },
+        "timeline": {
+            "title": "Our Journey",
+            "subtitle": "From a small hub in Gaza to a leading tech enabler in Palestine.",
+            "items": {
+                "2011": {
+                    "title": "Founded",
+                    "description": "Gaza Sky Geeks was established by Mercy Corps and Google.org to support Gaza's digital economy."
+                },
+                "2015": {
+                    "title": "First Accelerator",
+                    "description": "Launched the first startup accelerator in Gaza, GeeXelerator."
+                },
+                "2017": {
+                    "title": "Expansion to West Bank",
+                    "description": "Expanded our programs to serve tech talent in the West Bank."
+                },
+                "2020": {
+                    "title": "Online Pivot",
+                    "description": "Successfully transitioned all programs online during the global pandemic."
+                },
+                "present": {
+                    "title": "Resilience & Growth",
+                    "description": "Continuing to empower thousands of Palestinians despite challenges.",
+                    "year": "Present"
+                }
+            }
+        }
+    },
+    "ProgramsPage": {
+        "header": {
+            "title": "Our Programs",
+            "subtitle": "Empowering the next generation of Palestinian tech talent."
+        },
+        "elevate": {
+            "header": {
+                "title": "Elevate",
+                "description": "The ultimate launchpad for Palestinian tech and digital service companies to scale globally."
+            },
+            "content": {
+                "title": "Scale Your Tech Business",
+                "description": "Elevate is a flagship initiative designed to empower Palestinian tech companies to overcome obstacles and access global markets. We provide expert advisory, talent pipelines, and direct connections to international clients.",
+                "capacity": {
+                    "title": "Capacity Building",
+                    "description": "Access \"Train-to-Hire\" stipends to onboard fresh talent and \"Upskilling\" grants to train your existing team in cutting-edge technologies."
+                },
+                "market": {
+                    "title": "Market Access",
+                    "description": "Get legal support for international contracts, C-Suite coaching, and sponsorship to attend major global tech conferences like GITEX and Web Summit."
+                },
+                "marketing": {
+                    "title": "Marketing & Branding",
+                    "description": "Revamp your digital presence with professional agency support, from SEO and content creation to complete brand strategy overhauls."
+                }
+            },
+            "cta": "Apply for Elevate",
+            "highlights": {
+                "title": "Program Highlights",
+                "items": [
+                    "20-Week Intensive Growth Journey",
+                    "Direct Access to Mentors & Investors",
+                    "Subsidized Tools & Software Costs",
+                    "Legal & Compliance Assistance",
+                    "ElevateBridge: Upwork Agency Support",
+                    "Talent Recovery for Crisis-Impacted Firms"
+                ]
+            }
+        },
+        "code_academy": {
+            "header": {
+                "title": "Code Academy",
+                "description": "Immersive coding bootcamps to launch your career as a full-stack developer."
+            },
+            "content": {
+                "title": "Become a Full Stack Developer",
+                "description": "Our immersive 6-month coding bootcamp is designed to take you from a beginner to a job-ready software engineer. You will learn the latest technologies, work on real-world projects, and get connected with top employers."
+            },
+            "cta": "Apply Now",
+            "highlights": {
+                "title": "Program Highlights",
+                "items": [
+                    "6-Month Immersive Bootcamp",
+                    "Full Stack MERN Curriculum",
+                    "Real-World Projects",
+                    "Job Placement Support",
+                    "Mentorship from Experts",
+                    "Global Alumni Network"
+                ]
+            }
+        },
+        "freelance_academy": {
+            "header": {
+                "title": "Freelance Academy",
+                "description": "Learn how to work with international clients and earn income online."
+            },
+            "content": {
+                "title": "Work from Anywhere",
+                "description": "The Freelance Academy provides training and mentorship to help you build a successful freelancing career. Learn how to find clients, pitch your services, and deliver high-quality work on global platforms."
+            },
+            "cta": "Apply Now",
+            "highlights": {
+                "title": "Program Highlights",
+                "items": [
+                    "Profile Optimization (Upwork)",
+                    "Client Communication Skills",
+                    "Project Management",
+                    "Risk-Free Proposals",
+                    "Financial Management",
+                    "First Contract Guarantee"
+                ]
+            }
+        },
+        "coworking": {
+            "header": {
+                "title": "Co-working Spaces",
+                "description": "Vibrant, high-tech hubs for innovation and collaboration."
+            },
+            "content": {
+                "title": "A Home for Techies",
+                "description": "Our hubs in Gaza and the West Bank provide reliable electricity, high-speed internet, and a supportive community for freelancers, startups, and remote workers. Whether you need a hot desk for a day or a private office for your team, we have flexible membership plans to suit your needs."
+            },
+            "cta": "Book a Tour",
+            "highlights": {
+                "title": "Hub Highlights",
+                "items": [
+                    "High-Speed Fiber Internet",
+                    "Backup Power / Generators",
+                    "Modern Meeting Rooms",
+                    "Free Coffee & Tea",
+                    "Vibrant Tech Community",
+                    "Flexible Membership Plans"
+                ]
+            }
+        },
+        "employability": {
+            "header": {
+                "title": "Employability",
+                "description": "Bridging the gap between talent and opportunity."
+            },
+            "content": {
+                "title": "Launch Your Career",
+                "description": "Our employability programs are designed to ensure every graduate finds meaningful work. We partner with top companies to provide internships, mentorship, and direct hiring paths."
+            },
+            "cta_hire": "Hire Talent",
+            "cta_job": "Find a Job",
+            "highlights": {
+                "title": "Program Highlights",
+                "items": [
+                    "Direct introductions to hiring partners",
+                    "Resume and portfolio reviews",
+                    "Mock technical interviews",
+                    "Paid internship opportunities",
+                    "Career coaching and mentorship"
+                ]
+            }
+        },
+        "geexelerator": {
+            "header": {
+                "title": "GeeXelerator",
+                "description": "Startup acceleration for pre-seed tech startups in Palestine."
+            },
+            "content": {
+                "title": "Build Your Startup",
+                "description": "GeeXelerator is the first program of its kind in Gaza. We help early-stage startups validate their ideas, build their products, and get ready for investment through mentorship, funding, and access to a global network."
+            },
+            "cta": "Apply Now",
+            "highlights": {
+                "title": "Program Highlights",
+                "items": [
+                    "Pre-Seed Funding",
+                    "Product Market Fit Validation",
+                    "Access to Mentors",
+                    "Investment Readiness",
+                    "Pitch Deck Refinement",
+                    "Legal & Incorporation Support"
+                ]
+            }
+        },
+        "individuals": {
+            "header": {
+                "title": "For Individuals",
+                "description": "Unlock your potential with our world-class training programs and career accelerators."
+            },
+            "view_program": "View Program"
+        }
+    },
+    "CoursesPage": {
+        "header": {
+            "title": "Upskill with Us",
+            "subtitle": "Choose from our wide range of technical and soft skills courses."
+        },
+        "filters": {
+            "all": "All Categories",
+            "search": "Search courses...",
+            "no_results": "No courses found matching your criteria."
+        },
+        "labels": {
+            "details": "View Details",
+            "close": "Close",
+            "apply": "Apply Now",
+            "started": "Started",
+            "duration": "Duration",
+            "level": "Level"
+        },
+        "status": {
+            "Open": "Open",
+            "Closed": "Closed",
+            "Upcoming": "Upcoming"
+        },
+        "categories": {
+            "Frontend": "Frontend",
+            "Backend": "Backend",
+            "Design": "Design",
+            "Soft Skills": "Soft Skills",
+            "Fullstack": "Fullstack"
+        },
+        "levels": {
+            "Beginner": "Beginner",
+            "Intermediate": "Intermediate",
+            "Advanced": "Advanced"
+        },
+        "data": {
+            "fs-101": {
+                "title": "Full Stack Web Development",
+                "description": "Master React, Node.js, and modern web development practices in this intensive bootcamp."
+            },
+            "ui-foundations": {
+                "title": "UI/UX Design Foundations",
+                "description": "Learn the principles of user interface and user experience design using Figma."
+            },
+            "freelance-kickstart": {
+                "title": "Freelance Kickstart",
+                "description": "Learn how to build your profile on Upwork and land your first international job."
+            },
+            "react-adv": {
+                "title": "Advanced React Patterns",
+                "description": "Deep dive into performance optimization, state management, and custom hooks."
+            }
+        }
+    },
+    "ContactPage": {
+        "header": {
+            "title": "Contact Us",
+            "subtitle": "Have questions? We would love to hear from you."
+        },
+        "info": {
+            "title": "Get in touch",
+            "description": "Our team is here to help you with any inquiries about our programs, courses, or partnerships.",
+            "address": {
+                "label": "Address",
+                "city": "Gaza City, Palestine",
+                "location": "Al-Sina'a Junction"
+            },
+            "phone": "Telephone",
+            "email": "Email"
+        },
+        "form": {
+            "name": "Name",
+            "email": "Email",
+            "message": "Message",
+            "cta": "Send message"
+        }
+    },
+    "GalleryPage": {
+        "header": {
+            "title": "Our Impact in Photos",
+            "subtitle": "Explore the moments that define our community and our mission."
+        }
+    },
+    "EventsPage": {
+        "header": {
+            "title": "Events",
+            "subtitle": "Connect, learn, and grow with our community events."
+        },
+        "labels": {
+            "close": "Close",
+            "register": "Register Now",
+            "ended": "Event Ended"
+        },
+        "status": {
+            "Open": "Open",
+            "Registration Required": "Registration Required",
+            "Finished": "Finished"
+        },
+        "types": {
+            "Hackathon": "Hackathon",
+            "Meetup": "Meetup",
+            "Workshop": "Workshop"
+        },
+        "locations": {
+            "Gaza Sky Geeks Hub": "Gaza Sky Geeks Hub",
+            "Online (Zoom)": "Online (Zoom)",
+            "Hebron Hub": "Hebron Hub"
+        },
+        "data": {
+            "hackathon-2025": {
+                "title": "Gaza Tech Hackathon",
+                "description": "Join us for a 48-hour coding challenge to solve local problems with tech."
+            },
+            "freelance-meetup": {
+                "title": "Freelancers Monthly Meetup",
+                "description": "Network with other freelancers and share tips on landing clients."
+            },
+            "react-workshop": {
+                "title": "React Server Components Workshop",
+                "description": "A deep dive into Next.js App Router and Server Components."
+            }
+        }
+    },
+    "GetInvolvedPage": {
+        "header": {
+            "title": "Get Involved",
+            "subtitle": "There are many ways to contribute to the Gaza Sky Geeks mission."
+        },
+        "cards": {
+            "hire": {
+                "title": "Hire Talent",
+                "description": "Find top-tier developers, designers, and freelancers from our alumni network.",
+                "action": "Hire Now"
+            },
+            "mentor": {
+                "title": "Become a Mentor",
+                "description": "Share your expertise with the next generation of Palestinian tech leaders.",
+                "action": "Apply to Mentor"
+            },
+            "volunteer": {
+                "title": "Volunteer",
+                "description": "Support our events and workshops. Be part of the community.",
+                "action": "Join Us"
+            }
+        }
+    }
+}
