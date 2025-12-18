@@ -12,7 +12,7 @@ interface PageHeaderProps {
 
 export function PageHeader({ title, description, className, gradient }: PageHeaderProps) {
     return (
-        <div className={cn("relative w-full overflow-hidden pt-36 pb-20 md:pt-48 md:pb-32", className)}>
+        <div className={cn("relative w-full overflow-hidden pt-24 pb-12 sm:pt-36 sm:pb-20 md:pt-48 md:pb-32", className)}>
 
             {/* 
                Ambient Background removed for true transparency 
@@ -25,7 +25,7 @@ export function PageHeader({ title, description, className, gradient }: PageHead
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
                 >
-                    <h1 className="text-5xl font-extrabold tracking-tight text-gray-900 dark:text-white sm:text-7xl mb-6 drop-shadow-sm">
+                    <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 dark:text-white sm:text-5xl md:text-6xl lg:text-7xl mb-6 drop-shadow-sm">
                         {/* 
                             Animated Gradient Text 
                             Using standard CSS animation approach for reliable infinite flow
