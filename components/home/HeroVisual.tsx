@@ -18,10 +18,10 @@ const codeSnippets = [
         impact: "High"
     },
     {
-        fn: "launchStartup",
-        vision: '"Unicorn"',
-        tech: '["Scale", "Growth", "VC"]',
-        impact: "Massive"
+        fn: "elevateBusiness",
+        vision: '"Sustainability"',
+        tech: '["Digital", "Export", "Growth"]',
+        impact: "Economic"
     }
 ]
 

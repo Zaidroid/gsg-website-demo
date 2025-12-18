@@ -10,7 +10,9 @@ import { motion, AnimatePresence } from "framer-motion"
 import { ThemeToggle } from "@/components/ui/ThemeToggle"
 import { useTheme } from "next-themes"
 
-function LogoWithTheme() {
+// Wrapped LogoWithTheme to accept className for motion integration if needed, 
+// though we handle motion in the parent for now.
+function LogoWithTheme({ isScrolled }: { isScrolled: boolean }) {
     const { theme } = useTheme()
     const [mounted, setMounted] = React.useState(false)
 
@@ -19,22 +21,30 @@ function LogoWithTheme() {
     }, [])
 
     if (!mounted) {
-        return <div className="h-10 w-[140px]" /> // Placeholder to prevent hydration mismatch
+        return <div className="h-10 w-[140px]" /> // Placeholder
     }
 
     return (
         <Link href="/" className="flex items-center space-x-2">
-            <Image
-                src="/logo.png"
-                alt="Gaza Sky Geeks"
-                width={140}
-                height={40}
-                className={cn(
-                    "h-10 w-auto transition-all",
-                    theme === "dark" && "invert brightness-0"
-                )}
-                priority
-            />
+            <motion.div
+                animate={{
+                    scale: isScrolled ? 0.9 : 1,
+                    opacity: 1
+                }}
+                transition={{ type: "spring", stiffness: 100, damping: 20 }}
+            >
+                <Image
+                    src="/logo.png"
+                    alt="Gaza Sky Geeks"
+                    width={140}
+                    height={40}
+                    className={cn(
+                        "h-10 w-auto",
+                        theme === "dark" && "invert brightness-0"
+                    )}
+                    priority
+                />
+            </motion.div>
         </Link>
     )
 }
@@ -51,6 +61,7 @@ const navigation = [
 export function Navbar() {
     const [isOpen, setIsOpen] = React.useState(false)
     const pathname = usePathname()
+    const { theme } = useTheme()
 
     const [isScrolled, setIsScrolled] = React.useState(false)
 
@@ -75,50 +86,76 @@ export function Navbar() {
 
     return (
         <motion.nav
-            layout
-            initial={{ width: "100%", top: 0, height: 80, borderRadius: 0 }}
+            initial={{ width: "100%", top: 0, borderRadius: 0 }}
             animate={{
-                width: isScrolled ? "auto" : "100%",
+                width: isScrolled ? "fit-content" : "100%", // Changed to fit-content for more accurate sizing
+                minWidth: isScrolled ? "fit-content" : "100%", // Enforce minWidth to prevent shrinking below content
                 maxWidth: isScrolled ? "1080px" : "100%",
                 top: isScrolled ? 12 : 0,
-                height: isScrolled ? 64 : 80,
                 borderRadius: isScrolled ? "9999px" : "0px",
-                border: isScrolled ? "1px solid rgba(229, 231, 235, 0.5)" : "0px solid transparent" // Note: border color might need manual dark mode handling if using inline styles, but Tailwind classes on parent are easier.
+                // Interpolate colors smoothly using motion
+                backgroundColor: isScrolled
+                    ? (theme === 'dark' ? "rgba(22, 32, 44, 0.8)" : "rgba(255, 255, 255, 0.8)")
+                    : "rgba(0, 0, 0, 0)",
+                borderColor: isScrolled
+                    ? (theme === 'dark' ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.1)")
+                    : "rgba(0, 0, 0, 0)",
+                borderWidth: "1px",
+                borderStyle: "solid",
             }}
-            /* Smooth ease-out to avoid bounciness */
-            transition={{ type: "spring", stiffness: 100, damping: 20, mass: 1 }}
-            className={cn(
-                "sticky z-50 mx-auto border-b border-transparent bg-transparent transition-all duration-300",
-                isScrolled ? "shadow-sm px-8 min-w-fit border-gray-200/20 dark:border-white/5 bg-white/10 dark:bg-black/20 backdrop-blur-xl" : "w-full"
-            )}
+            style={{
+                backdropFilter: isScrolled ? "blur(12px)" : "none",
+            }}
+            /* Updated physics for premium feel */
+            transition={{
+                type: "spring",
+                stiffness: 80,
+                damping: 20,
+                mass: 1
+            }}
+            className="sticky z-50 mx-auto overflow-hidden whitespace-nowrap" // Added whitespace-nowrap to prevent text overlap during resize
         >
-            <motion.div layout className="mx-auto flex h-full items-center justify-between px-4 sm:px-6 lg:px-8 gap-8">
+            <motion.div layout className={cn(
+                "mx-auto flex h-[80px] items-center justify-between px-4 sm:px-6 lg:px-8 gap-8 transition-all duration-500",
+                isScrolled ? "h-[64px]" : "h-[80px]"
+            )}>
                 <div className="flex items-center">
-                    <LogoWithTheme />
+                    <LogoWithTheme isScrolled={isScrolled} />
                 </div>
 
                 {/* Desktop Navigation */}
                 <div className="hidden md:block">
-                    <div className="flex items-center space-x-6">
-                        {navigation.map((item) => (
-                            <Link
-                                key={item.name}
-                                href={item.href}
-                                className={cn(
-                                    "text-sm font-bold transition-colors hover:text-secondary",
-                                    pathname === item.href
-                                        ? "text-secondary"
-                                        : "text-gray-600 dark:text-gray-300"
-                                )}
-                            >
-                                {item.name}
-                            </Link>
-                        ))}
+                    <div className="flex items-center gap-1">
+                        {navigation.map((item) => {
+                            const isActive = pathname === item.href;
+                            return (
+                                <Link
+                                    key={item.name}
+                                    href={item.href}
+                                    className={cn(
+                                        "relative px-4 py-2 rounded-full text-sm font-bold transition-colors",
+                                        isActive
+                                            ? "text-secondary"
+                                            : "text-gray-600 dark:text-gray-300 hover:text-secondary"
+                                    )}
+                                >
+                                    {isActive && (
+                                        <motion.div
+                                            layoutId="active-nav-pill"
+                                            className="absolute inset-0 bg-secondary/10 dark:bg-secondary/20 rounded-full"
+                                            style={{ zIndex: -1 }}
+                                            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                                        />
+                                    )}
+                                    {item.name}
+                                </Link>
+                            );
+                        })}
                         <div className="h-6 w-px bg-gray-200 dark:bg-gray-700 mx-2" />
                         <ThemeToggle />
                         <Link
                             href="/donate"
-                            className="rounded-full bg-secondary px-6 py-2.5 text-sm font-bold text-white transition-all hover:bg-secondary/90 hover:shadow-lg"
+                            className="rounded-full bg-secondary px-6 py-2.5 text-sm font-bold text-white transition-all hover:bg-secondary/90 hover:shadow-lg ml-2"
                         >
                             Donate
                         </Link>
