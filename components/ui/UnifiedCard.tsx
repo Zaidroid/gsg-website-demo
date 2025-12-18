@@ -46,7 +46,7 @@ const TRANSITION = {
     damping: 30,
     stiffness: 300,
     mass: 0.8
-}
+} as const
 
 // --- COMPONENTS ---
 
