@@ -1,29 +1,11 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef } from "react"
 import { courses } from "@/data/courses"
-import { motion, AnimatePresence } from "framer-motion"
-import { Search, X, Calendar, Clock, BarChart } from "lucide-react"
+import { AnimatePresence } from "framer-motion"
+import { Search, Calendar, Clock, BarChart } from "lucide-react"
 import { PageHeader } from "@/components/ui/PageHeader"
-
-
-// Utility hook for click outside (Inline for now if not available)
-function useClickOutside(ref: any, handler: any) {
-    useEffect(() => {
-        const listener = (event: any) => {
-            if (!ref.current || ref.current.contains(event.target)) {
-                return
-            }
-            handler(event)
-        }
-        document.addEventListener("mousedown", listener)
-        document.addEventListener("touchstart", listener)
-        return () => {
-            document.removeEventListener("mousedown", listener)
-            document.removeEventListener("touchstart", listener)
-        }
-    }, [ref, handler])
-}
+import { Card, ExpandedCard, ExpandedCardOverlay } from "@/components/ui/UnifiedCard"
 
 export default function CoursesPage() {
     const [filter, setFilter] = useState("All")
@@ -37,9 +19,6 @@ export default function CoursesPage() {
         const matchesSearch = course.title.toLowerCase().includes(search.toLowerCase())
         return matchesCategory && matchesSearch
     })
-
-    const modalRef = useRef<HTMLDivElement>(null)
-    useClickOutside(modalRef, () => setSelectedCourse(null))
 
     return (
         <div className="bg-transparent min-h-screen">
@@ -82,15 +61,12 @@ export default function CoursesPage() {
                     <AnimatePresence mode="popLayout">
                         {filteredCourses.length > 0 ? (
                             filteredCourses.map((course, index) => (
-                                <motion.div
-                                    layoutId={`course-${course.id}`}
+                                <Card
                                     key={course.id}
-                                    initial={{ opacity: 0, scale: 0.9 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    exit={{ opacity: 0, scale: 0.9 }}
-                                    transition={{ duration: 0.3, delay: index * 0.05 }}
+                                    id={course.id}
                                     onClick={() => setSelectedCourse(course)}
-                                    className="group relative flex flex-col justify-between overflow-hidden rounded-2xl bg-white/30 dark:bg-slate-900/40 backdrop-blur-lg shadow-lg border border-white/40 dark:border-white/5 p-6 hover:shadow-2xl hover:-translate-y-1 transition-all cursor-pointer ring-1 ring-black/5 dark:ring-white/5"
+                                    delay={index * 0.05}
+                                    className="p-6"
                                 >
                                     <div className="relative z-10">
                                         <div className="flex items-center justify-between mb-4">
@@ -117,7 +93,7 @@ export default function CoursesPage() {
                                             Details &rarr;
                                         </span>
                                     </div>
-                                </motion.div>
+                                </Card>
                             ))
                         ) : (
                             <div className="col-span-full text-center py-12 text-gray-500 dark:text-gray-400">
@@ -131,67 +107,44 @@ export default function CoursesPage() {
                 <AnimatePresence>
                     {selectedCourse && (
                         <>
-                            <motion.div
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                                onClick={() => setSelectedCourse(null)}
-                                className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[90]"
-                            />
-                            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 pointer-events-none">
-                                <motion.div
-                                    layoutId={`course-${selectedCourse.id}`}
-                                    ref={modalRef}
-                                    className="w-full max-w-2xl bg-white dark:bg-slate-900 rounded-3xl shadow-2xl overflow-hidden pointer-events-auto ring-1 ring-black/5 dark:ring-white/10"
-                                >
-                                    {/* Modal Header Image/Gradient equivalent */}
-                                    <div className="relative h-32 bg-gradient-to-r from-secondary/20 to-gsg-orange/20 dark:from-secondary/10 dark:to-gsg-orange/10 flex items-center justify-center overflow-hidden">
-                                        <div className="absolute inset-0 bg-grid-pattern opacity-10" />
-                                        <button
-                                            onClick={(e) => { e.stopPropagation(); setSelectedCourse(null); }}
-                                            className="absolute top-4 right-4 p-2 bg-white/20 hover:bg-white/40 backdrop-blur-md rounded-full text-gray-900 dark:text-white transition-colors"
-                                        >
-                                            <X size={20} />
-                                        </button>
-                                        <h2 className="text-3xl font-black text-primary dark:text-white drop-shadow-sm px-8 text-center bg-clip-text">
-                                            {selectedCourse.title}
-                                        </h2>
+                            <ExpandedCardOverlay onClose={() => setSelectedCourse(null)} />
+                            <ExpandedCard
+                                id={selectedCourse.id}
+                                title={selectedCourse.title}
+                                onClose={() => setSelectedCourse(null)}
+                                headerGradient="bg-gradient-to-r from-secondary/20 to-gsg-orange/20 dark:from-secondary/10 dark:to-gsg-orange/10"
+                            >
+                                <div className="flex flex-wrap gap-4 mb-6">
+                                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 text-sm font-bold">
+                                        <Calendar size={16} /> {selectedCourse.startDate}
                                     </div>
-
-                                    <div className="p-8">
-                                        <div className="flex flex-wrap gap-4 mb-6">
-                                            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 text-sm font-bold">
-                                                <Calendar size={16} /> {selectedCourse.startDate}
-                                            </div>
-                                            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 text-sm font-bold">
-                                                <Clock size={16} /> {selectedCourse.duration}
-                                            </div>
-                                            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-300 text-sm font-bold">
-                                                <BarChart size={16} /> {selectedCourse.level}
-                                            </div>
-                                        </div>
-
-                                        <p className="text-lg leading-relaxed text-gray-700 dark:text-gray-300 mb-8">
-                                            {selectedCourse.description}
-                                        </p>
-
-                                        <div className="flex items-center justify-end gap-4 border-t border-gray-100 dark:border-white/5 pt-6">
-                                            <button
-                                                onClick={() => setSelectedCourse(null)}
-                                                className="px-4 py-2 text-sm font-bold text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors"
-                                            >
-                                                Close
-                                            </button>
-                                            <button
-                                                className="px-8 py-3 rounded-xl bg-secondary hover:bg-secondary/90 text-white font-bold shadow-lg shadow-secondary/20 hover:shadow-secondary/40 hover:-translate-y-0.5 transition-all"
-                                                onClick={() => alert("Application process starting...")} // Placeholder
-                                            >
-                                                Apply for this Course
-                                            </button>
-                                        </div>
+                                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 text-sm font-bold">
+                                        <Clock size={16} /> {selectedCourse.duration}
                                     </div>
-                                </motion.div>
-                            </div>
+                                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-300 text-sm font-bold">
+                                        <BarChart size={16} /> {selectedCourse.level}
+                                    </div>
+                                </div>
+
+                                <p className="text-lg leading-relaxed text-gray-700 dark:text-gray-300 mb-8">
+                                    {selectedCourse.description}
+                                </p>
+
+                                <div className="flex items-center justify-end gap-4 border-t border-gray-100 dark:border-white/5 pt-6">
+                                    <button
+                                        onClick={() => setSelectedCourse(null)}
+                                        className="px-4 py-2 text-sm font-bold text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors"
+                                    >
+                                        Close
+                                    </button>
+                                    <button
+                                        className="px-8 py-3 rounded-xl bg-secondary hover:bg-secondary/90 text-white font-bold shadow-lg shadow-secondary/20 hover:shadow-secondary/40 hover:-translate-y-0.5 transition-all"
+                                        onClick={() => alert("Application process starting...")}
+                                    >
+                                        Apply for this Course
+                                    </button>
+                                </div>
+                            </ExpandedCard>
                         </>
                     )}
                 </AnimatePresence>
