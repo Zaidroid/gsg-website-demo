@@ -185,6 +185,7 @@ model ContactInfo {
   city        String
   phone       String
   email       String
+  order       Int      @default(0)
   published   Boolean  @default(true)
   updatedAt   DateTime @updatedAt
 }

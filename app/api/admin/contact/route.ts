@@ -5,11 +5,15 @@ import { requireAdmin } from "@/lib/auth-helpers"
 import { z } from "zod"
 
 const contactInfoSchema = z.object({
-    platform: z.string().min(1),
-    value: z.string().min(1),
-    labelEn: z.string().min(1),
-    labelAr: z.string().min(1),
-    order: z.number().int(),
+    locationKey: z.string().min(1),
+    nameEn: z.string().min(1),
+    nameAr: z.string().min(1),
+    addressEn: z.string().min(1),
+    addressAr: z.string().min(1),
+    city: z.string().min(1),
+    phone: z.string().min(1),
+    email: z.string().email(),
+    order: z.number().int().default(0),
     published: z.boolean().default(true),
 })
 
