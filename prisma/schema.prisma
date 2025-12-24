@@ -1,0 +1,279 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+// Authentication & Users
+model Account {
+  id                String  @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String  @db.ObjectId
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.String
+  access_token      String? @db.String
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.String
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  sessionToken String   @unique
+  userId       String   @db.ObjectId
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  role          String    @default("admin") // admin, editor, viewer
+  accounts      Account[]
+  sessions      Session[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model VerificationToken {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// Course Management
+model Course {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  courseId    String   @unique // e.g., "fs-101"
+  titleEn     String
+  titleAr     String
+  descriptionEn String
+  descriptionAr String
+  category    String   // Frontend, Backend, Fullstack, Design, Soft Skills
+  level       String   // Beginner, Intermediate, Advanced
+  duration    String
+  startDate   DateTime
+  status      String   // Open, Closed, Upcoming
+  published   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// Event Management
+model Event {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  eventId     String   @unique
+  titleEn     String
+  titleAr     String
+  descriptionEn String
+  descriptionAr String
+  date        DateTime
+  location    String
+  type        String   // Workshop, Meetup, Hackathon
+  status      String   // Open, Registration Required, Finished
+  published   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// Success Stories
+model Story {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  storyId     String   @unique
+  titleEn     String
+  titleAr     String
+  clientEn    String
+  clientAr    String
+  challengeEn String   @db.String
+  challengeAr String   @db.String
+  solutionEn  String   @db.String
+  solutionAr  String   @db.String
+  resultEn    String   @db.String
+  resultAr    String   @db.String
+  imageUrl    String
+  featured    Boolean  @default(false)
+  published   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model GalleryImage {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  imageUrl    String   @unique
+  captionEn   String?
+  captionAr   String?
+  altText     String
+  tags        String[] // For categorization
+  featured    Boolean  @default(false)
+  published   Boolean  @default(true)
+  uploadedAt  DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// Programs Content
+model Program {
+  id                String   @id @default(auto()) @map("_id") @db.ObjectId
+  programId         String   @unique // elevate, code_academy, freelance_academy, etc.
+  titleEn           String
+  titleAr           String
+  headerDescEn      String
+  headerDescAr      String
+  contentTitleEn    String
+  contentTitleAr    String
+  contentDescEn     String   @db.String
+  contentDescAr     String   @db.String
+  highlightsEn      String[] // Array of highlight points
+  highlightsAr      String[]
+  ctaTextEn         String
+  ctaTextAr         String
+  ctaLink           String
+  imageUrl          String?
+  published         Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+// Impact Statistics
+model ImpactStat {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  statKey         String   @unique // graduates, startups, freelance, women
+  labelEn         String
+  labelAr         String
+  value           String   // Can be number or formatted string
+  order           Int      // Display order
+  published       Boolean  @default(true)
+  updatedAt       DateTime @updatedAt
+}
+
+// Annual Report
+model AnnualReport {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  year        String   @unique
+  titleEn     String
+  titleAr     String
+  pdfUrl      String
+  coverImage  String?
+  published   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// Contact Information
+model ContactInfo {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  locationKey String   @unique // e.g., "main", "gaza", "westbank"
+  nameEn      String
+  nameAr      String
+  addressEn   String
+  addressAr   String
+  city        String
+  phone       String
+  email       String
+  published   Boolean  @default(true)
+  updatedAt   DateTime @updatedAt
+}
+
+// Site Settings
+model SiteSettings {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  settingKey      String   @unique
+  settingValue    String   @db.String // JSON string for complex values
+  description     String?
+  updatedAt       DateTime @updatedAt
+}
+
+// Translation Management (for dynamic translations)
+model Translation {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  key         String   // e.g., "Navbar.about"
+  locale      String   // "en" or "ar"
+  value       String   @db.String
+  namespace   String   // e.g., "Navbar", "HomePage", etc.
+  updatedAt   DateTime @updatedAt
+  @@unique([key, locale])
+}
+
+// Homepage Hero Management
+model HeroSection {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  titleEn     String
+  titleAr     String
+  subtitleEn  String
+  subtitleAr  String
+  typewriterEn String[] // Array of strings for typewriter effect
+  typewriterAr String[]
+  ctaTextEn   String
+  ctaTextAr   String
+  ctaLink     String
+  secondaryCtaTextEn String?
+  secondaryCtaTextAr String?
+  secondaryCtaLink   String?
+  videoUrl    String? // Optional background video or visual
+  published   Boolean  @default(true)
+  updatedAt   DateTime @updatedAt
+}
+
+// Menu Management
+model MenuItem {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  nameEn      String
+  nameAr      String
+  href        String
+  order       Int
+  location    String   // Navbar, Footer
+  published   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// About Page Content
+model AboutContent {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  headerTitleEn   String
+  headerTitleAr   String
+  headerDescEn    String
+  headerDescAr    String
+  missionTitleEn  String
+  missionTitleAr  String
+  missionDescEn   String
+  missionDescAr   String
+  visionTitleEn   String
+  visionTitleAr   String
+  visionDescEn    String
+  visionDescAr    String
+  valuesTitleEn   String
+  valuesTitleAr   String
+  valuesEn        String[]
+  valuesAr        String[]
+  updatedAt       DateTime @updatedAt
+}
+
+// Timeline Management
+model TimelineItem {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  yearEn        String
+  yearAr        String
+  titleEn       String
+  titleAr       String
+  descriptionEn String
+  descriptionAr String
+  order         Int
+  published     Boolean  @default(true)
+  updatedAt     DateTime @updatedAt
+}

@@ -7,10 +7,34 @@ import { Link } from "@/src/i18n/routing"
 import { HeroVisual } from "./HeroVisual"
 import { TypewriterText } from "@/components/ui/TypewriterText"
 
-export function Hero() {
+import { HeroSection } from "@prisma/client"
+
+interface HeroProps {
+    heroData?: HeroSection | null
+}
+
+export function Hero({ heroData }: HeroProps) {
     const t = useTranslations("HomePage.hero");
     const locale = useLocale();
     const isRtl = locale === "ar";
+
+    // Helper to get content based on locale and data availability
+    const getContent = (key: string, dbEn?: string | null, dbAr?: string | null) => {
+        if (dbEn && dbAr) {
+            return isRtl ? dbAr : dbEn;
+        }
+        return t(key);
+    }
+
+    const title = getContent("title_main", heroData?.titleEn, heroData?.titleAr);
+    const subtitle = getContent("description", heroData?.subtitleEn, heroData?.subtitleAr);
+    const ctaText = getContent("cta_explore", heroData?.ctaTextEn, heroData?.ctaTextAr);
+    const ctaLink = heroData?.ctaLink || "/programs";
+
+    const secCtaText = getContent("cta_story", heroData?.secondaryCtaTextEn, heroData?.secondaryCtaTextAr);
+    const secCtaLink = heroData?.secondaryCtaLink || "/about";
+
+    const typewriterTexts = (isRtl ? heroData?.typewriterAr : heroData?.typewriterEn) || t.raw("typewriter");
 
     return (
         <div className="relative overflow-hidden pt-12 pb-16 lg:pt-32 lg:pb-40 bg-transparent transition-colors duration-300">
@@ -33,33 +57,33 @@ export function Hero() {
                         </div>
 
                         <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-primary dark:text-white lg:text-7xl mb-6 leading-[1.1] drop-shadow-lg">
-                            <span className="block">{t("title_main")}</span>
+                            <span className="block">{title}</span>
                             <span className="text-secondary block mt-2">
                                 <TypewriterText
-                                    texts={t.raw("typewriter")}
+                                    texts={typewriterTexts}
                                     className="bg-clip-text text-transparent bg-gradient-to-r from-gsg-orange to-gsg-orange-light pb-2"
                                 />
                             </span>
                         </h1>
 
                         <p className="mb-8 text-lg leading-8 text-gray-700 dark:text-slate-200 max-w-xl font-medium transition-colors drop-shadow-md text-center lg:text-start">
-                            {t("description")}
+                            {subtitle}
                         </p>
 
                         <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
                             <Link
-                                href="/programs"
+                                href={ctaLink}
                                 className="group flex items-center justify-center gap-2 rounded-full bg-primary dark:bg-white px-8 py-4 text-base font-bold text-white dark:text-[#1F3036] shadow-lg transition-all hover:bg-primary/90 dark:hover:bg-gray-100 hover:shadow-xl hover:-translate-y-1 w-full sm:w-auto"
                             >
-                                {t("cta_explore")}
+                                {ctaText}
                                 <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1 rtl:group-hover:-translate-x-1" />
                             </Link>
                             <Link
-                                href="/about"
+                                href={secCtaLink}
                                 className="group flex items-center justify-center gap-2 rounded-full bg-white/50 dark:bg-slate-800/50 px-8 py-4 text-base font-bold text-primary dark:text-white shadow-md ring-1 ring-gray-200/50 dark:ring-slate-700/50 backdrop-blur-md transition-all hover:bg-white/70 dark:hover:bg-slate-800/70 hover:ring-gray-300 dark:hover:ring-slate-600 hover:-translate-y-1 w-full sm:w-auto"
                             >
                                 <Play className="h-4 w-4 fill-primary dark:fill-white group-hover:scale-110 transition-transform" />
-                                {t("cta_story")}
+                                {secCtaText}
                             </Link>
                         </div>
                     </motion.div>

@@ -56,18 +56,37 @@ export function Navbar() {
     const pathname = usePathname()
     const { theme } = useTheme()
     const t = useTranslations("Navbar");
+    const locale = useLocale()
 
     const [isScrolled, setIsScrolled] = React.useState(false)
+    const [dynamicLinks, setDynamicLinks] = React.useState<any[]>([])
 
-    const navigation = [
-        { name: t("about"), href: "/about" },
-        { name: t("programs"), href: "/programs" },
-        { name: t("courses"), href: "/courses" },
-        { name: t("events"), href: "/events" },
-        { name: t("gallery"), href: "/gallery" },
-        { name: t("get-involved"), href: "/get-involved" },
-        { name: t("contact"), href: "/contact" },
-    ]
+    // Fetch dynamic menu
+    React.useEffect(() => {
+        fetch("/api/menu")
+            .then(res => res.json())
+            .then(data => {
+                if (data.Navbar) {
+                    setDynamicLinks(data.Navbar)
+                }
+            })
+            .catch(err => console.error("Navbar fetch error:", err))
+    }, [])
+
+    const navigation = dynamicLinks.length > 0
+        ? dynamicLinks.map(link => ({
+            name: locale === 'ar' ? link.nameAr : link.nameEn,
+            href: link.href
+        }))
+        : [
+            { name: t("about"), href: "/about" },
+            { name: t("programs"), href: "/programs" },
+            { name: t("courses"), href: "/courses" },
+            { name: t("events"), href: "/events" },
+            { name: t("gallery"), href: "/gallery" },
+            { name: t("get-involved"), href: "/get-involved" },
+            { name: t("contact"), href: "/contact" },
+        ]
 
     // Close mobile menu when route changes
     React.useEffect(() => {

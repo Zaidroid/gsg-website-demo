@@ -9,6 +9,7 @@ import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { routing } from '@/src/i18n/routing';
 import { ThemeProvider } from "@/components/theme-provider";
+import { Providers } from "@/components/Providers";
 import "../globals.css";
 
 const sourceSans = Source_Sans_3({
@@ -47,23 +48,29 @@ export default async function RootLayout({
 
   return (
     <html lang={locale} dir={locale === 'ar' ? 'rtl' : 'ltr'} suppressHydrationWarning>
-      <body className={`${sourceSans.variable} ${tajawal.variable} antialiased ${locale === 'ar' ? 'font-arabic' : 'font-sans'} relative transition-colors duration-300`}>
-        <NextIntlClientProvider messages={messages}>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="light"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <ParticleBackground />
-            <Navbar />
-            <main className="flex-1 relative z-10">
-              {children}
-            </main>
-            <Footer />
-          </ThemeProvider>
-        </NextIntlClientProvider>
+      <body
+        className={`${sourceSans.variable} ${tajawal.variable} antialiased ${locale === 'ar' ? 'font-arabic' : 'font-sans'} relative transition-colors duration-300`}
+        suppressHydrationWarning
+      >
+        <Providers>
+          <NextIntlClientProvider messages={messages}>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="light"
+              enableSystem
+              disableTransitionOnChange
+            >
+              <ParticleBackground />
+              <Navbar />
+              <main className="flex-1 relative z-10">
+                {children}
+              </main>
+              <Footer />
+            </ThemeProvider>
+          </NextIntlClientProvider>
+        </Providers>
       </body>
     </html>
   );
 }
+
