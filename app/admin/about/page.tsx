@@ -202,26 +202,26 @@ export default function AboutManagerPage() {
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                         {/* Header Section */}
                         <AboutCard title="Header Section" icon={LayoutDashboard} description="The first thing users see on the About page.">
-                            <InputField label="Header Title (EN)" value={content.headerTitleEn} onChange={v => setContent({ ...content, headerTitleEn: v })} />
-                            <InputField label="Header Title (AR)" value={content.headerTitleAr} onChange={v => setContent({ ...content, headerTitleAr: v })} isRtl />
-                            <TextareaField label="Header Description (EN)" value={content.headerDescEn} onChange={v => setContent({ ...content, headerDescEn: v })} />
-                            <TextareaField label="Header Description (AR)" value={content.headerDescAr} onChange={v => setContent({ ...content, headerDescAr: v })} isRtl />
+                            <InputField label="Header Title (EN)" value={content.headerTitleEn} onChange={(v: string) => setContent({ ...content, headerTitleEn: v })} />
+                            <InputField label="Header Title (AR)" value={content.headerTitleAr} onChange={(v: string) => setContent({ ...content, headerTitleAr: v })} isRtl />
+                            <TextareaField label="Header Description (EN)" value={content.headerDescEn} onChange={(v: string) => setContent({ ...content, headerDescEn: v })} />
+                            <TextareaField label="Header Description (AR)" value={content.headerDescAr} onChange={(v: string) => setContent({ ...content, headerDescAr: v })} isRtl />
                         </AboutCard>
 
                         {/* Mission & Vision */}
                         <div className="space-y-8">
                             <AboutCard title="Our Mission" icon={Target} description="GSG's core purpose.">
-                                <InputField label="Mission Title (EN)" value={content.missionTitleEn} onChange={v => setContent({ ...content, missionTitleEn: v })} />
-                                <InputField label="Mission Title (AR)" value={content.missionTitleAr} onChange={v => setContent({ ...content, missionTitleAr: v })} isRtl />
-                                <TextareaField label="Mission Text (EN)" value={content.missionDescEn} onChange={v => setContent({ ...content, missionDescEn: v })} />
-                                <TextareaField label="Mission Text (AR)" value={content.missionDescAr} onChange={v => setContent({ ...content, missionDescAr: v })} isRtl />
+                                <InputField label="Mission Title (EN)" value={content.missionTitleEn} onChange={(v: string) => setContent({ ...content, missionTitleEn: v })} />
+                                <InputField label="Mission Title (AR)" value={content.missionTitleAr} onChange={(v: string) => setContent({ ...content, missionTitleAr: v })} isRtl />
+                                <TextareaField label="Mission Text (EN)" value={content.missionDescEn} onChange={(v: string) => setContent({ ...content, missionDescEn: v })} />
+                                <TextareaField label="Mission Text (AR)" value={content.missionDescAr} onChange={(v: string) => setContent({ ...content, missionDescAr: v })} isRtl />
                             </AboutCard>
 
                             <AboutCard title="Our Vision" icon={Eye} description="GSG's long-term goal.">
-                                <InputField label="Vision Title (EN)" value={content.visionTitleEn} onChange={v => setContent({ ...content, visionTitleEn: v })} />
-                                <InputField label="Vision Title (AR)" value={content.visionTitleAr} onChange={v => setContent({ ...content, visionTitleAr: v })} isRtl />
-                                <TextareaField label="Vision Text (EN)" value={content.visionDescEn} onChange={v => setContent({ ...content, visionDescEn: v })} />
-                                <TextareaField label="Vision Text (AR)" value={content.visionDescAr} onChange={v => setContent({ ...content, visionDescAr: v })} isRtl />
+                                <InputField label="Vision Title (EN)" value={content.visionTitleEn} onChange={(v: string) => setContent({ ...content, visionTitleEn: v })} />
+                                <InputField label="Vision Title (AR)" value={content.visionTitleAr} onChange={(v: string) => setContent({ ...content, visionTitleAr: v })} isRtl />
+                                <TextareaField label="Vision Text (EN)" value={content.visionDescEn} onChange={(v: string) => setContent({ ...content, visionDescEn: v })} />
+                                <TextareaField label="Vision Text (AR)" value={content.visionDescAr} onChange={(v: string) => setContent({ ...content, visionDescAr: v })} isRtl />
                             </AboutCard>
                         </div>
                     </div>
@@ -298,7 +298,14 @@ export default function AboutManagerPage() {
     )
 }
 
-function AboutCard({ title, icon: Icon, description, children }: any) {
+interface AboutCardProps {
+    title: string
+    icon: any
+    description: string
+    children: React.ReactNode
+}
+
+function AboutCard({ title, icon: Icon, description, children }: AboutCardProps) {
     return (
         <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm overflow-hidden flex flex-col h-full">
             <div className="p-6 border-b border-gray-50 bg-gray-50/50">
@@ -319,7 +326,14 @@ function AboutCard({ title, icon: Icon, description, children }: any) {
     )
 }
 
-function InputField({ label, value, onChange, isRtl = false }: any) {
+interface InputFieldProps {
+    label: string
+    value: string
+    onChange: (value: string) => void
+    isRtl?: boolean
+}
+
+function InputField({ label, value, onChange, isRtl = false }: InputFieldProps) {
     return (
         <div className="space-y-2">
             <label className="text-[10px] font-black text-gray-300 uppercase tracking-[0.2em]">{label}</label>
@@ -336,7 +350,14 @@ function InputField({ label, value, onChange, isRtl = false }: any) {
     )
 }
 
-function TextareaField({ label, value, onChange, isRtl = false }: any) {
+interface TextareaFieldProps {
+    label: string
+    value: string
+    onChange: (value: string) => void
+    isRtl?: boolean
+}
+
+function TextareaField({ label, value, onChange, isRtl = false }: TextareaFieldProps) {
     return (
         <div className="space-y-2">
             <label className="text-[10px] font-black text-gray-300 uppercase tracking-[0.2em]">{label}</label>
@@ -363,17 +384,17 @@ function TimelineForm({ initialData = {}, onSave, onCancel }: any) {
     return (
         <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <InputField label="Year (EN)" value={item.yearEn} onChange={v => setItem({ ...item, yearEn: v })} />
-                <InputField label="Year (AR)" value={item.yearAr} onChange={v => setItem({ ...item, yearAr: v })} isRtl />
-                <InputField label="Milestone Title (EN)" value={item.titleEn} onChange={v => setItem({ ...item, titleEn: v })} />
-                <InputField label="Milestone Title (AR)" value={item.titleAr} onChange={v => setItem({ ...item, titleAr: v })} isRtl />
+                <InputField label="Year (EN)" value={item.yearEn} onChange={(v: string) => setItem({ ...item, yearEn: v })} />
+                <InputField label="Year (AR)" value={item.yearAr} onChange={(v: string) => setItem({ ...item, yearAr: v })} isRtl />
+                <InputField label="Milestone Title (EN)" value={item.titleEn} onChange={(v: string) => setItem({ ...item, titleEn: v })} />
+                <InputField label="Milestone Title (AR)" value={item.titleAr} onChange={(v: string) => setItem({ ...item, titleAr: v })} isRtl />
                 <div className="md:col-span-2">
-                    <TextareaField label="Description (EN)" value={item.descriptionEn} onChange={v => setItem({ ...item, descriptionEn: v })} />
+                    <TextareaField label="Description (EN)" value={item.descriptionEn} onChange={(v: string) => setItem({ ...item, descriptionEn: v })} />
                 </div>
                 <div className="md:col-span-2">
-                    <TextareaField label="Description (AR)" value={item.descriptionAr} onChange={v => setItem({ ...item, descriptionAr: v })} isRtl />
+                    <TextareaField label="Description (AR)" value={item.descriptionAr} onChange={(v: string) => setItem({ ...item, descriptionAr: v })} isRtl />
                 </div>
-                <InputField label="Order" value={item.order} onChange={v => setItem({ ...item, order: parseInt(v) || 0 })} />
+                <InputField label="Order" value={item.order} onChange={(v: string) => setItem({ ...item, order: parseInt(v) || 0 })} />
             </div>
             <div className="flex justify-end gap-3 pt-4 border-t border-gray-50">
                 <button onClick={onCancel} className="px-6 py-2 text-sm font-bold text-gray-400">Cancel</button>

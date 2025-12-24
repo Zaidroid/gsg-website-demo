@@ -135,13 +135,13 @@ export default function MenuManagerPage() {
                         {items.length === 0 && (
                             <button
                                 onClick={async () => {
-                                    const defaults = [
-                                        { nameEn: "About Us", nameAr: "من نحن", href: "/about", order: 0, location: "Navbar", published: true },
-                                        { nameEn: "Programs", nameAr: "البرامج", href: "/programs", order: 1, location: "Navbar", published: true },
-                                        { nameEn: "Courses", nameAr: "الدورات", href: "/courses", order: 2, location: "Navbar", published: true },
-                                        { nameEn: "Events", nameAr: "الفعاليات", href: "/events", order: 3, location: "Navbar", published: true },
-                                        { nameEn: "Privacy Policy", nameAr: "سياسة الخصوصية", href: "/privacy", order: 0, location: "Footer", published: true },
-                                        { nameEn: "Terms of Service", nameAr: "شروط الخدمة", href: "/terms", order: 1, location: "Footer", published: true },
+                                    const defaults: Partial<MenuItem>[] = [
+                                        { nameEn: "About Us", nameAr: "من نحن", href: "/about", order: 0, location: "Navbar" as const, published: true },
+                                        { nameEn: "Programs", nameAr: "البرامج", href: "/programs", order: 1, location: "Navbar" as const, published: true },
+                                        { nameEn: "Courses", nameAr: "الدورات", href: "/courses", order: 2, location: "Navbar" as const, published: true },
+                                        { nameEn: "Events", nameAr: "الفعاليات", href: "/events", order: 3, location: "Navbar" as const, published: true },
+                                        { nameEn: "Privacy Policy", nameAr: "سياسة الخصوصية", href: "/privacy", order: 0, location: "Footer" as const, published: true },
+                                        { nameEn: "Terms of Service", nameAr: "شروط الخدمة", href: "/terms", order: 1, location: "Footer" as const, published: true },
                                     ]
                                     for (const d of defaults) {
                                         await handleSave(d)
@@ -216,7 +216,18 @@ export default function MenuManagerPage() {
     )
 }
 
-function MenuSection({ title, icon: Icon, items, onDelete, onMove, editingItem, setEditingItem, onSaveEdit }: any) {
+interface MenuSectionProps {
+    title: string
+    icon: any
+    items: MenuItem[]
+    onDelete: (id: string) => void
+    onMove: (index: number, direction: "up" | "down") => void
+    editingItem: Partial<MenuItem> | null
+    setEditingItem: (item: Partial<MenuItem> | null) => void
+    onSaveEdit: (item: Partial<MenuItem>) => void
+}
+
+function MenuSection({ title, icon: Icon, items, onDelete, onMove, editingItem, setEditingItem, onSaveEdit }: MenuSectionProps) {
     return (
         <div className="space-y-4">
             <div className="flex items-center justify-between px-2">
@@ -253,7 +264,7 @@ function MenuSection({ title, icon: Icon, items, onDelete, onMove, editingItem, 
                                 </button>
                             </div>
 
-                            {editingItem?.id === item.id ? (
+                            {editingItem && editingItem.id === item.id ? (
                                 <div className="flex-1 bg-gsg-teal/5 p-6 rounded-2xl animate-in fade-in duration-300">
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <MenuFormInputs item={editingItem} onChange={setEditingItem} />
@@ -304,7 +315,12 @@ function MenuSection({ title, icon: Icon, items, onDelete, onMove, editingItem, 
     )
 }
 
-function MenuFormInputs({ item, onChange }: any) {
+interface MenuFormInputsProps {
+    item: Partial<MenuItem>
+    onChange: (item: Partial<MenuItem>) => void
+}
+
+function MenuFormInputs({ item, onChange }: MenuFormInputsProps) {
     return (
         <>
             <div className="space-y-2">
@@ -342,7 +358,7 @@ function MenuFormInputs({ item, onChange }: any) {
                 <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-1">Display Location</label>
                 <select
                     value={item.location}
-                    onChange={e => onChange({ ...item, location: e.target.value })}
+                    onChange={e => onChange({ ...item, location: e.target.value as "Navbar" | "Footer" })}
                     className="w-full px-4 py-3 bg-gray-50/50 border border-transparent rounded-xl focus:ring-2 focus:ring-gsg-teal/10 focus:bg-white focus:border-gsg-teal/20 transition-all text-sm font-medium"
                 >
                     <option value="Navbar">Navbar</option>
