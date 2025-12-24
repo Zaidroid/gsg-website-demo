@@ -25,7 +25,7 @@ export async function PATCH(
     } catch (error: any) {
         console.error("Error updating program:", error)
         if (error.name === "ZodError") {
-            return NextResponse.json({ error: "Validation error", details: error.errors }, { status: 400 })
+            return NextResponse.json({ error: "Validation error", details: error.issues }, { status: 400 })
         }
         return NextResponse.json({ error: "Failed to update program" }, { status: 500 })
     }

@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
     } catch (error: any) {
         console.error("Error creating gallery image:", error)
         if (error.name === "ZodError") {
-            return NextResponse.json({ error: "Validation error", details: error.errors }, { status: 400 })
+            return NextResponse.json({ error: "Validation error", details: error.issues }, { status: 400 })
         }
         return NextResponse.json({ error: "Failed to create gallery image" }, { status: 500 })
     }

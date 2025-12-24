@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json(event, { status: 201 })
     } catch (error: any) {
         if (error.name === "ZodError") {
-            return NextResponse.json({ error: "Validation error", details: error.errors }, { status: 400 })
+            return NextResponse.json({ error: "Validation error", details: error.issues }, { status: 400 })
         }
         return NextResponse.json({ error: "Failed to create event" }, { status: 500 })
     }

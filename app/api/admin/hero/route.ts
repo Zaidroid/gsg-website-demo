@@ -77,7 +77,7 @@ export async function PUT(req: Request) {
         return NextResponse.json(hero);
     } catch (error) {
         if (error instanceof z.ZodError) {
-            return NextResponse.json({ error: "Validation error", details: error.errors }, { status: 400 });
+            return NextResponse.json({ error: "Validation error", details: error.issues }, { status: 400 });
         }
         console.error("Error updating hero:", error);
         return NextResponse.json({ error: "Failed to update hero content" }, { status: 500 });

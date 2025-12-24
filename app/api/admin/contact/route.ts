@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
     } catch (error: any) {
         console.error("Error creating contact info:", error)
         if (error.name === "ZodError") {
-            return NextResponse.json({ error: "Validation error", details: error.errors }, { status: 400 })
+            return NextResponse.json({ error: "Validation error", details: error.issues }, { status: 400 })
         }
         return NextResponse.json({ error: "Failed to create contact info" }, { status: 500 })
     }
