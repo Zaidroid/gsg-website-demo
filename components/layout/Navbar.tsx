@@ -34,16 +34,13 @@ function LogoWithTheme({ isScrolled }: { isScrolled: boolean }) {
                 }}
                 transition={{ type: "spring", stiffness: 100, damping: 20 }}
             >
-                <Image
+                <img
                     src="/logo.png"
                     alt="Gaza Sky Geeks"
-                    width={140}
-                    height={40}
                     className={cn(
                         "h-10 w-auto",
                         theme === "dark" && "invert brightness-0"
                     )}
-                    priority
                 />
             </motion.div>
         </Link>
