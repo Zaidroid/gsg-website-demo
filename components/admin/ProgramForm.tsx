@@ -180,7 +180,7 @@ export function ProgramForm({ initialData }: ProgramFormProps) {
                             Program Header Image
                         </label>
                         <ImageUpload
-                            value={form.watch("imageUrl") ? [form.watch("imageUrl")] : []}
+                            value={form.watch("imageUrl") ? [form.watch("imageUrl") as string] : []}
                             onChange={(url) => form.setValue("imageUrl", url)}
                             onRemove={() => form.setValue("imageUrl", "")}
                             endpoint="imageUploader"
