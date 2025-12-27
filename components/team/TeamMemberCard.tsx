@@ -45,7 +45,6 @@ export function TeamMemberCard({ member, isAr, index, viewMode = "grid", onClick
                             alt={isAr ? member.nameAr : member.nameEn}
                             fill
                             className="object-cover object-top transition-transform duration-500 group-hover:scale-110"
-                            style={{ imageOrientation: 'from-image' }}
                         />
                     ) : (
                         <div className="flex h-full items-center justify-center text-xs text-gray-400">
@@ -102,7 +101,6 @@ export function TeamMemberCard({ member, isAr, index, viewMode = "grid", onClick
                                 alt={isAr ? member.nameAr : member.nameEn}
                                 fill
                                 className="object-cover object-top transition-transform duration-700 ease-in-out group-hover:scale-105"
-                                style={{ imageOrientation: 'from-image' }}
                             />
                         </motion.div>
                     ) : (

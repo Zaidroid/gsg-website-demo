@@ -198,7 +198,6 @@ export function LiveTeamGrid({ initialMembers }: LiveTeamGridProps) {
                                                     alt={isAr ? selectedMember.nameAr : selectedMember.nameEn}
                                                     fill
                                                     className="object-cover"
-                                                    style={{ imageOrientation: 'from-image' }}
                                                 />
                                             </motion.div>
                                         ) : (

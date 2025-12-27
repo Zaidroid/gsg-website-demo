@@ -46,7 +46,6 @@ export function Team({ team = [] }: TeamProps) {
                                             alt={isAr ? person.nameAr : person.nameEn}
                                             fill
                                             className="object-cover object-center group-hover:scale-105 transition-transform duration-500"
-                                            style={{ imageOrientation: 'from-image' }}
                                         />
                                     ) : (
                                         <div className="w-full h-full flex items-center justify-center text-gray-400">
