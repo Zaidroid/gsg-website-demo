@@ -11,36 +11,36 @@ const CatalogueViewer = dynamic(() => import("@/components/CatalogueViewer"), {
     ssr: false,
 });
 
-// We'll handle the loading text inside the component if needed or use a static one for now.
-// Actually, let's keep it simple for dynamic.
-
-
-const stats = [
-    { id: 1, name: "Graduates Employed", value: "85%" },
-    { id: 2, name: "Startups Accelerated", value: "200+" },
-    { id: 3, name: "Freelance Earnings", value: "$5M+" },
-    { id: 4, name: "Women Participation", value: "50%" },
-]
-
 const backgroundImages = [
     "/images/gallery/GRA_7098.jpg",
     "/images/gallery/GRA_6393.jpg",
     "/images/gallery/EVE_0628 (2).jpg",
 ];
 
-import { useTranslations } from "next-intl"
+import { useTranslations, useLocale } from "next-intl"
 
-export function ImpactStats() {
+interface ImpactStatsProps {
+    initialStats?: any[]
+}
+
+export function ImpactStats({ initialStats = [] }: ImpactStatsProps) {
     const t = useTranslations("HomePage.impact");
+    const locale = useLocale();
     const [isOpen, setIsOpen] = useState(false);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-    const stats = [
+    // Use initialStats if available, otherwise fallback to empty (managed by admin now)
+    const stats = initialStats.length > 0 ? initialStats.map(stat => ({
+        id: stat.id,
+        name: locale === 'ar' ? stat.labelAr : stat.labelEn,
+        value: stat.value
+    })) : [
+        // Fallback or empty state if no stats defined in admin yet
         { id: 1, name: t("stats.graduates"), value: "85%" },
         { id: 2, name: t("stats.startups"), value: "200+" },
         { id: 3, name: t("stats.freelance"), value: "$5M+" },
         { id: 4, name: t("stats.women"), value: "50%" },
-    ]
+    ];
 
     // Cycle background images
     useEffect(() => {

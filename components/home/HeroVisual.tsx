@@ -7,7 +7,15 @@ import { useState, useEffect } from "react"
 // Terminal phases
 type TerminalPhase = "typing_command" | "executing" | "showing_output" | "pausing" | "clearing"
 
-const codeSnippets = [
+interface CodeSnippet {
+    fn: string
+    command: string
+    vision: string
+    tech: string
+    impact: string
+}
+
+const DEFAULT_SNIPPETS: CodeSnippet[] = [
     {
         fn: "buildFuture",
         command: "node buildFuture.js",
@@ -31,14 +39,32 @@ const codeSnippets = [
     }
 ]
 
-export function HeroVisual() {
+interface HeroVisualProps {
+    snippets?: string | null // JSON string
+}
+
+export function HeroVisual({ snippets }: HeroVisualProps) {
     const [loopNum, setLoopNum] = useState(0)
     const [phase, setPhase] = useState<TerminalPhase>("typing_command")
     const [commandText, setCommandText] = useState("")
     const [outputLines, setOutputLines] = useState<string[]>([])
     const [currentOutputIndex, setCurrentOutputIndex] = useState(0)
+    const [parsedSnippets, setParsedSnippets] = useState<CodeSnippet[]>(DEFAULT_SNIPPETS)
 
-    const currentSnippet = codeSnippets[loopNum % codeSnippets.length]
+    useEffect(() => {
+        if (snippets) {
+            try {
+                const parsed = JSON.parse(snippets)
+                if (Array.isArray(parsed) && parsed.length > 0) {
+                    setParsedSnippets(parsed)
+                }
+            } catch (e) {
+                console.error("Failed to parse terminal snippets, using defaults", e)
+            }
+        }
+    }, [snippets])
+
+    const currentSnippet = parsedSnippets[loopNum % parsedSnippets.length]
 
     // Generate output lines for current snippet
     const generateOutputLines = () => [
@@ -108,7 +134,7 @@ export function HeroVisual() {
         }
 
         return () => clearTimeout(timer)
-    }, [phase, commandText, currentOutputIndex, loopNum, currentSnippet.command])
+    }, [phase, commandText, currentOutputIndex, loopNum, currentSnippet.command, currentSnippet])
 
     return (
         <div className="relative h-[400px] w-full max-w-[500px] perspective-1000">
@@ -178,6 +204,7 @@ export function HeroVisual() {
                                             <motion.div
                                                 key={idx}
                                                 initial={{ opacity: 0, x: -10 }}
+                                                animate={{ opacity: 1, x: 0 }}
                                                 animate={{ opacity: 1, x: 0 }}
                                                 transition={{ duration: 0.2 }}
                                                 className={`

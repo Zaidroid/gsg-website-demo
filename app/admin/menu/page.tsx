@@ -1,10 +1,11 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import {
     Loader2, Plus, Trash, Edit2, Save, X,
-    ArrowUp, ArrowDown, ExternalLink, Menu as MenuIcon,
-    Navigation, Layout, PanelsTopLeft
+    GripVertical, ExternalLink, Menu as MenuIcon,
+    LogOut, PanelsTopLeft, Layout, CheckCircle2,
+    ArrowRight
 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { toast } from "@/components/ui/use-toast"
@@ -20,16 +21,33 @@ interface MenuItem {
     published: boolean
 }
 
+const AVAILABLE_PAGES = [
+    { nameEn: "Home", nameAr: "الرئيسية", href: "/" },
+    { nameEn: "About Us", nameAr: "من نحن", href: "/about" },
+    { nameEn: "Programs", nameAr: "البرامج", href: "/programs" },
+    { nameEn: "Courses", nameAr: "الدورات", href: "/courses" },
+    { nameEn: "Events", nameAr: "الفعاليات", href: "/events" },
+    { nameEn: "Contact Us", nameAr: "اتصل بنا", href: "/contact" },
+    { nameEn: "Privacy Policy", nameAr: "سياسة الخصوصية", href: "/privacy" },
+    { nameEn: "Terms of Service", nameAr: "شروط الخدمة", href: "/terms" },
+]
+
 export default function MenuManagerPage() {
     const [items, setItems] = useState<MenuItem[]>([])
     const [loading, setLoading] = useState(true)
     const [editingItem, setEditingItem] = useState<Partial<MenuItem> | null>(null)
-    const [newItem, setNewItem] = useState<Partial<MenuItem>>({
+    const [draggedItem, setDraggedItem] = useState<MenuItem | null>(null)
+
+    // New item form state
+    const [customLink, setCustomLink] = useState<Partial<MenuItem>>({
         location: "Navbar",
         published: true,
-        order: 0
+        order: 0,
+        nameEn: "",
+        nameAr: "",
+        href: ""
     })
-    const [showNewForm, setShowNewForm] = useState(false)
+    const [showCustomForm, setShowCustomForm] = useState(false)
 
     useEffect(() => {
         fetchMenu()
@@ -51,6 +69,13 @@ export default function MenuManagerPage() {
     const handleSave = async (item: Partial<MenuItem>) => {
         try {
             const isNew = !item.id
+
+            // Calculate order if new
+            if (isNew) {
+                const existingInLocation = items.filter(i => i.location === item.location)
+                item.order = existingInLocation.length
+            }
+
             const res = await fetch(isNew ? "/api/admin/menu" : `/api/admin/menu/${item.id}`, {
                 method: isNew ? "POST" : "PUT",
                 body: JSON.stringify(item),
@@ -59,10 +84,20 @@ export default function MenuManagerPage() {
 
             if (!res.ok) throw new Error()
 
-            toast({ title: "Success", description: `Menu item ${isNew ? "created" : "updated"} successfully.` })
+            const savedItem = await res.json()
+
+            if (isNew) {
+                setItems([...items, savedItem])
+                toast({ title: "Added", description: "Menu item added successfully." })
+            } else {
+                setItems(items.map(i => i.id === savedItem.id ? savedItem : i))
+                toast({ title: "Saved", description: "Menu item updated successfully." })
+            }
+
             setEditingItem(null)
-            setShowNewForm(false)
-            fetchMenu()
+            setShowCustomForm(false)
+            setCustomLink({ location: "Navbar", published: true, order: 0, nameEn: "", nameAr: "", href: "" })
+
         } catch (error) {
             toast({ title: "Error", description: "Failed to save menu item.", variant: "destructive" })
         }
@@ -80,35 +115,68 @@ export default function MenuManagerPage() {
         }
     }
 
-    const moveItem = async (index: number, direction: "up" | "down") => {
-        const currentItems = direction === "up"
-            ? items.filter(i => i.location === items[index].location).sort((a, b) => a.order - b.order)
-            : items.filter(i => i.location === items[index].location).sort((a, b) => a.order - b.order)
+    const onDragStart = (e: React.DragEvent, item: MenuItem) => {
+        setDraggedItem(item)
+        e.dataTransfer.effectAllowed = "move"
+        // Make the drag image transparent or styled if needed
+        e.dataTransfer.setData("text/plain", item.id)
+    }
 
-        // This is a simplified move. In a real app we'd handle the full list.
-        const newItems = [...items]
-        const targetIndex = direction === "up" ? index - 1 : index + 1
+    const onDragOver = (e: React.DragEvent, targetItem: MenuItem) => {
+        e.preventDefault()
+        if (!draggedItem || draggedItem.id === targetItem.id || draggedItem.location !== targetItem.location) return
 
-        if (targetIndex < 0 || targetIndex >= items.length) return
+        // Visual feedback could go here
+    }
 
-        const temp = newItems[index]
-        newItems[index] = newItems[targetIndex]
-        newItems[targetIndex] = temp
+    const onDrop = async (e: React.DragEvent, targetItem: MenuItem) => {
+        e.preventDefault()
+        if (!draggedItem || draggedItem.id === targetItem.id || draggedItem.location !== targetItem.location) return
 
-        const updated = newItems.map((item, i) => ({ ...item, order: i }))
-        setItems(updated)
+        const sectionItems = items
+            .filter(i => i.location === draggedItem.location)
+            .sort((a, b) => a.order - b.order)
 
+        const oldIndex = sectionItems.findIndex(i => i.id === draggedItem.id)
+        const newIndex = sectionItems.findIndex(i => i.id === targetItem.id)
+
+        const newSectionItems = [...sectionItems]
+        const [movedItem] = newSectionItems.splice(oldIndex, 1)
+        newSectionItems.splice(newIndex, 0, movedItem)
+
+        // Update all items with new order
+        const updatedLocalItems = items.map(item => {
+            if (item.location !== draggedItem.location) return item
+            const index = newSectionItems.findIndex(i => i.id === item.id)
+            return { ...item, order: index }
+        })
+
+        setItems(updatedLocalItems)
+        setDraggedItem(null)
+
+        // Persist new order
         try {
-            await Promise.all(updated.map(item =>
+            await Promise.all(newSectionItems.map((item, index) =>
                 fetch(`/api/admin/menu/${item.id}`, {
                     method: "PUT",
-                    body: JSON.stringify(item),
+                    body: JSON.stringify({ ...item, order: index }),
                     headers: { "Content-Type": "application/json" }
                 })
             ))
         } catch (error) {
-            toast({ title: "Sync Error", description: "Failed to persist new order.", variant: "destructive" })
+            toast({ title: "Sync Error", description: "Failed to save new order.", variant: "destructive" })
         }
+    }
+
+    const addPageToMenu = (page: typeof AVAILABLE_PAGES[0], location: "Navbar" | "Footer") => {
+        handleSave({
+            nameEn: page.nameEn,
+            nameAr: page.nameAr,
+            href: page.href,
+            location,
+            published: true,
+            order: 999 // Will be fixed by handleSave
+        })
     }
 
     if (loading) return (
@@ -121,194 +189,239 @@ export default function MenuManagerPage() {
     const footerItems = items.filter(i => i.location === "Footer").sort((a, b) => a.order - b.order)
 
     return (
-        <div className="space-y-8 p-4 lg:p-8 max-w-5xl mx-auto pb-24">
+        <div className="space-y-8 p-4 lg:p-8 max-w-7xl mx-auto pb-24">
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight text-gsg-navy flex items-center gap-3">
                         <MenuIcon className="w-8 h-8 text-gsg-teal" />
                         Menu Manager
                     </h1>
-                    <p className="text-gray-500 text-sm">Customize site navigation for Navbar and Footer.</p>
+                    <p className="text-gray-500 text-sm">Drag and drop to reorder. Select pages to add.</p>
                 </div>
-                {!showNewForm && (
-                    <div className="flex items-center gap-3">
-                        {items.length === 0 && (
-                            <button
-                                onClick={async () => {
-                                    const defaults: Partial<MenuItem>[] = [
-                                        { nameEn: "About Us", nameAr: "من نحن", href: "/about", order: 0, location: "Navbar" as const, published: true },
-                                        { nameEn: "Programs", nameAr: "البرامج", href: "/programs", order: 1, location: "Navbar" as const, published: true },
-                                        { nameEn: "Courses", nameAr: "الدورات", href: "/courses", order: 2, location: "Navbar" as const, published: true },
-                                        { nameEn: "Events", nameAr: "الفعاليات", href: "/events", order: 3, location: "Navbar" as const, published: true },
-                                        { nameEn: "Privacy Policy", nameAr: "سياسة الخصوصية", href: "/privacy", order: 0, location: "Footer" as const, published: true },
-                                        { nameEn: "Terms of Service", nameAr: "شروط الخدمة", href: "/terms", order: 1, location: "Footer" as const, published: true },
-                                    ]
-                                    for (const d of defaults) {
-                                        await handleSave(d)
-                                    }
-                                }}
-                                className="px-4 py-2.5 bg-gsg-orange/10 text-gsg-orange rounded-xl text-sm font-bold border border-gsg-orange/20 hover:bg-gsg-orange/20 transition-all"
-                            >
-                                Seed Default Menu
-                            </button>
-                        )}
-                        <button
-                            onClick={() => setShowNewForm(true)}
-                            className="flex items-center gap-2 px-6 py-2.5 bg-primary text-white rounded-xl text-sm font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all"
-                        >
-                            <Plus className="w-4 h-4" />
-                            Add New Link
-                        </button>
-                    </div>
-                )}
+                <button
+                    onClick={() => setShowCustomForm(true)}
+                    className="flex items-center gap-2 px-6 py-2.5 bg-gsg-navy text-white rounded-xl text-sm font-bold shadow-lg shadow-gsg-navy/20 hover:bg-gsg-navy/90 transition-all"
+                >
+                    <Plus className="w-4 h-4" />
+                    Custom Link
+                </button>
             </div>
 
-            {showNewForm && (
-                <div className="bg-white p-6 rounded-3xl border-2 border-gsg-teal/20 shadow-xl animate-in zoom-in-95 duration-200">
+            {showCustomForm && (
+                <div className="bg-white p-6 rounded-3xl border-2 border-gsg-teal/20 shadow-xl animate-in zoom-in-95 duration-200 mb-8">
                     <div className="flex items-center justify-between mb-6">
                         <h3 className="font-bold text-gsg-navy flex items-center gap-2">
                             <Plus className="w-5 h-5 text-gsg-teal" />
-                            New Navigation Link
+                            Add Custom Link
                         </h3>
-                        <button onClick={() => setShowNewForm(false)} className="text-gray-400 hover:text-red-500 transition-colors">
+                        <button onClick={() => setShowCustomForm(false)} className="text-gray-400 hover:text-red-500 transition-colors">
                             <X className="w-5 h-5" />
                         </button>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <MenuFormInputs item={newItem} onChange={setNewItem} />
+                        <MenuFormInputs item={customLink} onChange={setCustomLink} />
                     </div>
                     <div className="flex justify-end gap-3 mt-8">
-                        <button onClick={() => setShowNewForm(false)} className="px-4 py-2 text-sm font-bold text-gray-500 hover:text-gray-700">Cancel</button>
+                        <button onClick={() => setShowCustomForm(false)} className="px-4 py-2 text-sm font-bold text-gray-500 hover:text-gray-700">Cancel</button>
                         <button
-                            onClick={() => handleSave(newItem)}
+                            onClick={() => handleSave(customLink)}
                             className="px-8 py-2.5 bg-gsg-teal text-white rounded-xl text-sm font-bold shadow-lg shadow-gsg-teal/20"
                         >
-                            Create Link
+                            Add Link
                         </button>
                     </div>
                 </div>
             )}
 
-            <div className="grid grid-cols-1 gap-12">
-                <MenuSection
-                    title="Navbar Navigation"
-                    icon={PanelsTopLeft}
-                    items={navbarItems}
-                    onDelete={handleDelete}
-                    onMove={moveItem}
-                    editingItem={editingItem}
-                    setEditingItem={setEditingItem}
-                    onSaveEdit={handleSave}
-                />
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
 
-                <MenuSection
-                    title="Footer Links"
-                    icon={Layout}
-                    items={footerItems}
-                    onDelete={handleDelete}
-                    onMove={moveItem}
-                    editingItem={editingItem}
-                    setEditingItem={setEditingItem}
-                    onSaveEdit={handleSave}
-                />
+                {/* Left Column: Available Pages */}
+                <div className="lg:col-span-4 space-y-6">
+                    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 sticky top-8">
+                        <h2 className="text-lg font-bold text-gsg-navy mb-4 flex items-center gap-2">
+                            <Layout className="w-5 h-5 text-gray-400" />
+                            Available Pages
+                        </h2>
+                        <div className="space-y-3">
+                            {AVAILABLE_PAGES.map((page, idx) => {
+                                const isUsedInNav = navbarItems.some(i => i.href === page.href)
+                                const isUsedInFooter = footerItems.some(i => i.href === page.href)
+
+                                return (
+                                    <div key={idx} className="group p-3 rounded-xl border border-gray-100 hover:border-gsg-teal/30 hover:bg-gsg-teal/5 transition-all bg-gray-50/50">
+                                        <div className="flex items-center justify-between mb-2">
+                                            <span className="font-bold text-gray-700 text-sm">{page.nameEn}</span>
+                                            <span className="text-xs text-gray-400 font-mono bg-white px-1.5 py-0.5 rounded border border-gray-100">{page.href}</span>
+                                        </div>
+                                        <div className="flex gap-2">
+                                            <button
+                                                onClick={() => addPageToMenu(page, "Navbar")}
+                                                disabled={isUsedInNav}
+                                                className="flex-1 flex items-center justify-center gap-1 py-1.5 text-xs font-bold rounded-lg border border-gray-200 bg-white hover:bg-gsg-navy hover:text-white hover:border-gsg-navy transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                            >
+                                                {isUsedInNav ? <CheckCircle2 className="w-3 h-3" /> : <Plus className="w-3 h-3" />}
+                                                Navbar
+                                            </button>
+                                            <button
+                                                onClick={() => addPageToMenu(page, "Footer")}
+                                                disabled={isUsedInFooter}
+                                                className="flex-1 flex items-center justify-center gap-1 py-1.5 text-xs font-bold rounded-lg border border-gray-200 bg-white hover:bg-gsg-teal hover:text-white hover:border-gsg-teal transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                            >
+                                                {isUsedInFooter ? <CheckCircle2 className="w-3 h-3" /> : <Plus className="w-3 h-3" />}
+                                                Footer
+                                            </button>
+                                        </div>
+                                    </div>
+                                )
+                            })}
+                        </div>
+                    </div>
+                </div>
+
+                {/* Right Column: Active Menu */}
+                <div className="lg:col-span-8 space-y-8">
+                    <ActiveMenuSection
+                        title="Navbar Navigation"
+                        description="Top main navigation menu"
+                        icon={PanelsTopLeft}
+                        items={navbarItems}
+                        onDragStart={onDragStart}
+                        onDragOver={onDragOver}
+                        onDrop={onDrop}
+                        onDelete={handleDelete}
+                        editingItem={editingItem}
+                        setEditingItem={setEditingItem}
+                        onSaveEdit={handleSave}
+                        color="navy"
+                    />
+
+                    <ActiveMenuSection
+                        title="Footer Links"
+                        description="Bottom secondary links"
+                        icon={LogOut} // Rotated icon for footer
+                        items={footerItems}
+                        onDragStart={onDragStart}
+                        onDragOver={onDragOver}
+                        onDrop={onDrop}
+                        onDelete={handleDelete}
+                        editingItem={editingItem}
+                        setEditingItem={setEditingItem}
+                        onSaveEdit={handleSave}
+                        color="teal"
+                    />
+                </div>
             </div>
         </div>
     )
 }
 
-interface MenuSectionProps {
+interface ActiveMenuSectionProps {
     title: string
+    description: string
     icon: any
     items: MenuItem[]
+    onDragStart: (e: React.DragEvent, item: MenuItem) => void
+    onDragOver: (e: React.DragEvent, item: MenuItem) => void
+    onDrop: (e: React.DragEvent, item: MenuItem) => void
     onDelete: (id: string) => void
-    onMove: (index: number, direction: "up" | "down") => void
     editingItem: Partial<MenuItem> | null
     setEditingItem: (item: Partial<MenuItem> | null) => void
     onSaveEdit: (item: Partial<MenuItem>) => void
+    color: "navy" | "teal"
 }
 
-function MenuSection({ title, icon: Icon, items, onDelete, onMove, editingItem, setEditingItem, onSaveEdit }: MenuSectionProps) {
+function ActiveMenuSection({
+    title, description, icon: Icon, items,
+    onDragStart, onDragOver, onDrop, onDelete,
+    editingItem, setEditingItem, onSaveEdit, color
+}: ActiveMenuSectionProps) {
+
+    const borderColor = color === "navy" ? "border-gsg-navy/10" : "border-gsg-teal/10"
+    const iconColor = color === "navy" ? "text-gsg-navy" : "text-gsg-teal"
+    const bgColor = color === "navy" ? "bg-gsg-navy/5" : "bg-gsg-teal/5"
+
     return (
         <div className="space-y-4">
             <div className="flex items-center justify-between px-2">
-                <h2 className="text-xl font-bold text-gsg-navy flex items-center gap-2">
-                    <Icon className="w-5 h-5 text-gsg-orange" />
-                    {title}
-                </h2>
-                <Badge className="bg-gray-100 text-gray-500 border-0">{items.length} links</Badge>
+                <div>
+                    <h2 className={`text-xl font-bold flex items-center gap-2 ${iconColor}`}>
+                        <Icon className="w-5 h-5" />
+                        {title}
+                    </h2>
+                    <p className="text-xs text-gray-500 pl-7">{description}</p>
+                </div>
+                <Badge className="bg-gray-100 text-gray-500 border-0">{items.length} items</Badge>
             </div>
 
-            <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden divide-y divide-gray-50">
+            <div className={`bg-white rounded-3xl border ${borderColor} shadow-sm overflow-hidden min-h-[100px]`}>
                 {items.length === 0 ? (
-                    <div className="p-16 text-center text-gray-400 text-sm font-medium">
-                        <Navigation className="w-8 h-8 mx-auto mb-3 opacity-20" />
-                        No links configured for this section.
+                    <div className="p-12 text-center text-gray-400 text-sm font-medium border-2 border-dashed border-gray-100 m-4 rounded-xl">
+                        No items in this menu yet. Add some from the left!
                     </div>
                 ) : (
-                    items.map((item: any, index: number) => (
-                        <div key={item.id} className="p-4 flex items-center gap-4 hover:bg-gray-50/50 transition-colors group">
-                            <div className="flex flex-col gap-1">
-                                <button
-                                    onClick={() => onMove(index, "up")}
-                                    disabled={index === 0}
-                                    className="p-1 text-gray-300 hover:text-gsg-teal disabled:opacity-0 transition-all"
-                                >
-                                    <ArrowUp className="w-4 h-4" />
-                                </button>
-                                <button
-                                    onClick={() => onMove(index, "down")}
-                                    disabled={index === items.length - 1}
-                                    className="p-1 text-gray-300 hover:text-gsg-teal disabled:opacity-0 transition-all"
-                                >
-                                    <ArrowDown className="w-4 h-4" />
-                                </button>
-                            </div>
-
-                            {editingItem && editingItem.id === item.id ? (
-                                <div className="flex-1 bg-gsg-teal/5 p-6 rounded-2xl animate-in fade-in duration-300">
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <MenuFormInputs item={editingItem} onChange={setEditingItem} />
-                                    </div>
-                                    <div className="flex justify-end gap-3 mt-4 pt-4 border-t border-gsg-teal/10">
-                                        <button onClick={() => setEditingItem(null)} className="px-3 py-1.5 text-xs font-bold text-gray-500">Cancel</button>
-                                        <button onClick={() => onSaveEdit(editingItem)} className="px-5 py-1.5 bg-gsg-teal text-white rounded-lg text-xs font-bold shadow-md flex items-center gap-2">
-                                            <Save className="w-3 h-3" />
-                                            Save Link
-                                        </button>
-                                    </div>
+                    <div className="divide-y divide-gray-50">
+                        {items.map((item) => (
+                            <div
+                                key={item.id}
+                                draggable={!editingItem}
+                                onDragStart={(e) => onDragStart(e, item)}
+                                onDragOver={(e) => onDragOver(e, item)}
+                                onDrop={(e) => onDrop(e, item)}
+                                className={cn(
+                                    "p-4 flex items-center gap-4 hover:bg-gray-50 transition-colors group relative cursor-move",
+                                    editingItem?.id === item.id ? "bg-gray-50" : ""
+                                )}
+                            >
+                                <div className="text-gray-300 cursor-grab active:cursor-grabbing hover:text-gray-400">
+                                    <GripVertical className="w-5 h-5" />
                                 </div>
-                            ) : (
-                                <>
-                                    <div className="flex-1">
-                                        <div className="flex items-center gap-2">
-                                            <span className="font-bold text-gsg-navy">{item.nameEn}</span>
-                                            <span className="text-gray-300 text-xs">|</span>
-                                            <span className="font-bold text-gsg-teal font-arabic" dir="rtl">{item.nameAr}</span>
-                                        </div>
-                                        <div className="flex items-center gap-2 mt-0.5">
-                                            <code className="text-[10px] bg-gray-100 px-2 py-0.5 rounded text-gray-500 font-mono tracking-tight">{item.href}</code>
-                                            {!item.published && <Badge className="bg-red-50 text-red-500 text-[10px] scale-75 border-0">Hidden</Badge>}
-                                        </div>
-                                    </div>
 
-                                    <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <button
-                                            onClick={() => setEditingItem(item)}
-                                            className="p-2 text-gray-400 hover:text-gsg-navy hover:bg-white rounded-lg shadow-sm border border-transparent hover:border-gray-100 transition-all"
-                                        >
-                                            <Edit2 className="w-4 h-4" />
-                                        </button>
-                                        <button
-                                            onClick={() => onDelete(item.id)}
-                                            className="p-2 text-red-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
-                                        >
-                                            <Trash className="w-4 h-4" />
-                                        </button>
+                                {editingItem && editingItem.id === item.id ? (
+                                    <div className="flex-1 bg-white p-4 rounded-xl shadow-sm border border-gray-200 animate-in fade-in duration-200">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <MenuFormInputs item={editingItem} onChange={setEditingItem} />
+                                        </div>
+                                        <div className="flex justify-end gap-3 mt-4 pt-4 border-t border-gray-100">
+                                            <button onClick={() => setEditingItem(null)} className="px-3 py-1.5 text-xs font-bold text-gray-500">Cancel</button>
+                                            <button onClick={() => onSaveEdit(editingItem)} className="px-5 py-1.5 bg-gsg-teal text-white rounded-lg text-xs font-bold shadow-md flex items-center gap-2">
+                                                <Save className="w-3 h-3" />
+                                                Save
+                                            </button>
+                                        </div>
                                     </div>
-                                </>
-                            )}
-                        </div>
-                    ))
+                                ) : (
+                                    <>
+                                        <div className="flex-1">
+                                            <div className="flex items-center gap-3">
+                                                <span className="font-bold text-gsg-navy">{item.nameEn}</span>
+                                                <ArrowRight className="w-3 h-3 text-gray-300" />
+                                                <span className="font-bold text-gsg-teal font-arabic" dir="rtl">{item.nameAr}</span>
+                                            </div>
+                                            <div className="flex items-center gap-2 mt-1">
+                                                <code className="text-[10px] bg-gray-100 px-2 py-0.5 rounded text-gray-500 font-mono">{item.href}</code>
+                                                {!item.published && <Badge className="bg-red-50 text-red-500 text-[10px] scale-75 border-0">Hidden</Badge>}
+                                            </div>
+                                        </div>
+
+                                        <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <button
+                                                onClick={() => setEditingItem(item)}
+                                                className="p-2 text-gray-400 hover:text-gsg-navy hover:bg-white rounded-lg shadow-sm border border-transparent hover:border-gray-100 transition-all"
+                                            >
+                                                <Edit2 className="w-4 h-4" />
+                                            </button>
+                                            <button
+                                                onClick={() => onDelete(item.id)}
+                                                className="p-2 text-red-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
+                                            >
+                                                <Trash className="w-4 h-4" />
+                                            </button>
+                                        </div>
+                                    </>
+                                )}
+                            </div>
+                        ))}
+                    </div>
                 )}
             </div>
         </div>

@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { Loader2, Save, Trash, Globe, Plus, X, Link as LinkIcon, Image as ImageIcon } from "lucide-react"
 
+import { useToast } from "@/components/ui/use-toast"
 import { RichTextEditor } from "./RichTextEditor"
 import { ImageUpload } from "./ImageUpload"
 
@@ -24,8 +25,9 @@ const formSchema = z.object({
     highlightsAr: z.array(z.string()).min(1, "At least one Arabic highlight is required"),
     ctaTextEn: z.string().min(1, "English CTA text is required"),
     ctaTextAr: z.string().min(1, "Arabic CTA text is required"),
-    ctaLink: z.string().url("Valid URL is required"),
-    imageUrl: z.string().optional(),
+    ctaLink: z.string().optional().nullable().or(z.literal('')),
+    imageUrl: z.string().optional().nullable().or(z.literal('')),
+    featured: z.boolean(),
     published: z.boolean(),
 })
 
@@ -43,8 +45,9 @@ interface ProgramFormValues {
     highlightsAr: string[]
     ctaTextEn: string
     ctaTextAr: string
-    ctaLink: string
-    imageUrl?: string
+    ctaLink?: string | null
+    imageUrl?: string | null
+    featured: boolean
     published: boolean
 }
 
@@ -54,6 +57,7 @@ interface ProgramFormProps {
 
 export function ProgramForm({ initialData }: ProgramFormProps) {
     const router = useRouter()
+    const { toast } = useToast()
     const [loading, setLoading] = useState(false)
     const [activeTab, setActiveTab] = useState<"en" | "ar">("en")
 
@@ -61,29 +65,37 @@ export function ProgramForm({ initialData }: ProgramFormProps) {
     const description = initialData ? "Edit an existing program page." : "Add a new program to the website."
     const action = initialData ? "Save changes" : "Create"
 
+    const defaultValues: ProgramFormValues = initialData ? {
+        ...initialData,
+        ctaLink: initialData.ctaLink || "",
+        imageUrl: initialData.imageUrl || "",
+    } : {
+        programId: "",
+        titleEn: "",
+        titleAr: "",
+        headerDescEn: "",
+        headerDescAr: "",
+        contentTitleEn: "",
+        contentTitleAr: "",
+        contentDescEn: "",
+        contentDescAr: "",
+        highlightsEn: [""],
+        highlightsAr: [""],
+        ctaTextEn: "Apply Now",
+        ctaTextAr: "قدم الآن",
+        ctaLink: "",
+        imageUrl: "",
+        featured: false,
+        published: true,
+    }
+
     const form = useForm<ProgramFormValues>({
         resolver: zodResolver(formSchema),
-        defaultValues: initialData || {
-            programId: "",
-            titleEn: "",
-            titleAr: "",
-            headerDescEn: "",
-            headerDescAr: "",
-            contentTitleEn: "",
-            contentTitleAr: "",
-            contentDescEn: "",
-            contentDescAr: "",
-            highlightsEn: [""],
-            highlightsAr: [""],
-            ctaTextEn: "Apply Now",
-            ctaTextAr: "قدم الآن",
-            ctaLink: "",
-            imageUrl: "",
-            published: true,
-        },
+        defaultValues,
     })
 
     const onSubmit = async (data: ProgramFormValues) => {
+        console.log("Submitting form:", data) // DEBUG Log
         try {
             setLoading(true)
             const url = initialData
@@ -105,10 +117,17 @@ export function ProgramForm({ initialData }: ProgramFormProps) {
 
             router.refresh()
             router.push(`/admin/programs`)
-            alert(`Program ${initialData ? "updated" : "created"} successfully!`)
+            toast({
+                title: "Success",
+                description: `Program ${initialData ? "updated" : "created"} successfully!`,
+            })
         } catch (error) {
-            console.error(error)
-            alert("Error saving program")
+            console.error("Submission error:", error)
+            toast({
+                title: "Error",
+                description: "Something went wrong. Please try again.",
+                variant: "destructive",
+            })
         } finally {
             setLoading(false)
         }
@@ -118,7 +137,7 @@ export function ProgramForm({ initialData }: ProgramFormProps) {
         <div className="space-y-6 max-w-5xl mx-auto">
             <div className="flex items-center justify-between">
                 <div>
-                    <h2 className="text-3xl font-bold tracking-tight text-gsg-navy">{title}</h2>
+                    <h2 className="text-3xl font-bold tracking-tight text-gsg-navy">{title} (Debug)</h2>
                     <p className="text-sm text-gray-500">{description}</p>
                 </div>
                 {initialData && (
@@ -130,8 +149,16 @@ export function ProgramForm({ initialData }: ProgramFormProps) {
                                     await fetch(`/api/admin/programs/${initialData.id}`, { method: "DELETE" })
                                     router.refresh()
                                     router.push("/admin/programs")
+                                    toast({
+                                        title: "Deleted",
+                                        description: "Program deleted successfully.",
+                                    })
                                 } catch (error) {
-                                    alert("Error deleting program")
+                                    toast({
+                                        title: "Error",
+                                        description: "Failed to delete program.",
+                                        variant: "destructive",
+                                    })
                                 } finally {
                                     setLoading(false)
                                 }
@@ -147,10 +174,14 @@ export function ProgramForm({ initialData }: ProgramFormProps) {
 
             <hr className="border-gray-100" />
 
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <form
+                onSubmit={form.handleSubmit(onSubmit, (errors) => console.log("Form errors:", errors))}
+                className="space-y-8"
+            >
                 {/* Meta Section */}
                 <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        {/* ... existing fields ... */}
                         <div className="space-y-2">
                             <label className="text-sm font-semibold text-gray-700">Program ID (unique slug)</label>
                             <input
@@ -163,7 +194,7 @@ export function ProgramForm({ initialData }: ProgramFormProps) {
                         <div className="space-y-2">
                             <label className="text-sm font-semibold text-gray-700 font-medium flex items-center gap-2">
                                 <LinkIcon className="w-4 h-4 text-gsg-teal" />
-                                CTA Link (Application URL)
+                                Application Button Link (URL)
                             </label>
                             <input
                                 disabled={loading}
@@ -177,7 +208,7 @@ export function ProgramForm({ initialData }: ProgramFormProps) {
                     <div className="space-y-2">
                         <label className="text-sm font-semibold text-gray-700 font-medium flex items-center gap-2">
                             <ImageIcon className="w-4 h-4 text-gsg-teal" />
-                            Program Header Image
+                            Highlights Background Image
                         </label>
                         <ImageUpload
                             value={form.watch("imageUrl") ? [form.watch("imageUrl") as string] : []}
@@ -186,7 +217,31 @@ export function ProgramForm({ initialData }: ProgramFormProps) {
                             endpoint="imageUploader"
                         />
                     </div>
+
+                    <div className="flex items-center gap-6">
+                        <div className="flex items-center gap-2">
+                            <input
+                                type="checkbox"
+                                id="featured"
+                                disabled={loading}
+                                {...form.register("featured")}
+                                className="w-4 h-4 rounded border-gray-300 text-gsg-teal focus:ring-gsg-teal"
+                            />
+                            <label htmlFor="featured" className="text-sm font-medium text-gray-700">Feature on Homepage</label>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <input
+                                type="checkbox"
+                                id="published"
+                                disabled={loading}
+                                {...form.register("published")}
+                                className="w-4 h-4 rounded border-gray-300 text-gsg-teal focus:ring-gsg-teal"
+                            />
+                            <label htmlFor="published" className="text-sm font-medium text-gray-700">Published</label>
+                        </div>
+                    </div>
                 </div>
+
 
                 {/* Content Section (Bilingual) */}
                 <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-6">
@@ -384,6 +439,6 @@ export function ProgramForm({ initialData }: ProgramFormProps) {
                     </button>
                 </div>
             </form>
-        </div>
+        </div >
     )
 }

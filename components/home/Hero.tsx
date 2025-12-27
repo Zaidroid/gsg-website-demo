@@ -95,7 +95,13 @@ export function Hero({ heroData }: HeroProps) {
                         transition={{ duration: 0.8, delay: 0.2 }}
                         className="flex items-center justify-center lg:justify-end relative z-0"
                     >
-                        <HeroVisual />
+                        <HeroVisual
+                            snippets={
+                                isRtl
+                                    ? heroData?.terminalSnippetsAr
+                                    : heroData?.terminalSnippetsEn
+                            }
+                        />
                     </motion.div>
 
                 </div>

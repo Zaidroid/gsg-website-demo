@@ -144,6 +144,7 @@ model Program {
   ctaTextAr         String
   ctaLink           String
   imageUrl          String?
+  featured          Boolean  @default(false)
   published         Boolean  @default(true)
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
@@ -226,6 +227,8 @@ model HeroSection {
   secondaryCtaTextAr String?
   secondaryCtaLink   String?
   videoUrl    String? // Optional background video or visual
+  terminalSnippetsEn String? // JSON string for terminal scripts
+  terminalSnippetsAr String? // JSON string for terminal scripts
   published   Boolean  @default(true)
   updatedAt   DateTime @updatedAt
 }
@@ -276,5 +279,37 @@ model TimelineItem {
   descriptionAr String
   order         Int
   published     Boolean  @default(true)
+  updatedAt     DateTime @updatedAt
+}
+
+// Partner Management
+model Partner {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  nameEn      String
+  nameAr      String
+  logoUrl     String
+  websiteUrl  String?
+  category    String   @default("General") // Strategic, Community, Funding, etc.
+  order       Int      @default(0)
+  published   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// Team Member Management
+model TeamMember {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  nameEn        String
+  nameAr        String
+  roleEn        String
+  roleAr        String
+  bioEn         String?
+  bioAr         String?
+  imageUrl      String?
+  linkedinUrl   String?
+  order         Int      @default(0)
+  department    String?  // Management, programs, tech, etc.
+  published     Boolean  @default(true)
+  createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 }

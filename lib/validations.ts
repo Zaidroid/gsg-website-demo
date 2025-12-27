@@ -83,8 +83,9 @@ export const programSchema = z.object({
     highlightsAr: z.array(z.string()),
     ctaTextEn: z.string().min(1),
     ctaTextAr: z.string().min(1),
-    ctaLink: z.string().url(),
-    imageUrl: z.string().optional(),
+    ctaLink: z.string().optional().nullable().or(z.literal('')),
+    imageUrl: z.string().optional().nullable().or(z.literal('')),
+    featured: z.boolean().default(false),
     published: z.boolean().default(true),
 })
 
@@ -146,3 +147,28 @@ export type SiteSettingsInput = z.infer<typeof siteSettingsSchema>
 export type MenuItemInput = z.infer<typeof menuItemSchema>
 export type AboutContentInput = z.infer<typeof aboutContentSchema>
 export type TimelineItemInput = z.infer<typeof timelineItemSchema>
+export type PartnerInput = z.infer<typeof partnerSchema>
+export type TeamMemberInput = z.infer<typeof teamMemberSchema>
+export const partnerSchema = z.object({
+    nameEn: z.string().min(1, "English name is required"),
+    nameAr: z.string().min(1, "Arabic name is required"),
+    logoUrl: z.string().min(1, "Logo image is required"),
+    websiteUrl: z.string().url().optional().or(z.literal("")),
+    category: z.string().default("General"),
+    order: z.number().int().default(0),
+    published: z.boolean().default(true),
+})
+
+export const teamMemberSchema = z.object({
+    nameEn: z.string().min(1, "English name is required"),
+    nameAr: z.string().min(1, "Arabic name is required"),
+    roleEn: z.string().min(1, "English role is required"),
+    roleAr: z.string().min(1, "Arabic role is required"),
+    bioEn: z.string().optional(),
+    bioAr: z.string().optional(),
+    imageUrl: z.string().optional(),
+    linkedinUrl: z.string().url().optional().or(z.literal("")),
+    order: z.number().int().default(0),
+    department: z.string().optional(),
+    published: z.boolean().default(true),
+})

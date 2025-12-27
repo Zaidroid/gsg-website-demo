@@ -5,29 +5,25 @@ import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { CheckCircle2, TrendingUp, Globe, Users } from "lucide-react"
 import { useState, useEffect } from "react"
-import { motion, AnimatePresence } from "framer-motion"
+import { motion } from "framer-motion"
 import Image from "next/image"
-import { useTranslations } from "next-intl"
-
-const backgroundImages = [
-    "/images/gallery/GRA_7098.jpg",
-    "/images/gallery/GRA_6393.jpg",
-    "/images/gallery/EVE_0628 (2).jpg",
-];
+import { useTranslations, useLocale } from "next-intl"
+import { fetchProgram } from "@/app/actions/fetchProgram"
 
 export default function ElevatePage() {
     const t = useTranslations("ProgramsPage.elevate");
-    const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const locale = useLocale();
+    const [program, setProgram] = useState<any>(null);
 
-    // Cycle background images
     useEffect(() => {
-        const interval = setInterval(() => {
-            setCurrentImageIndex((prev) => (prev + 1) % backgroundImages.length);
-        }, 5000);
-        return () => clearInterval(interval);
+        const loadProgram = async () => {
+            const data = await fetchProgram("elevate");
+            if (data) setProgram(data);
+        };
+        loadProgram();
     }, []);
 
-    const highlights = t.raw("highlights.items") as string[];
+    const highlights = (locale === 'ar' ? program?.highlightsAr : program?.highlightsEn) || t.raw("highlights.items") as string[];
 
     return (
         <main>
@@ -94,34 +90,32 @@ export default function ElevatePage() {
 
                         {/* Right Column: Key Features / Box */}
                         <div className="relative overflow-hidden bg-white/20 dark:bg-slate-900/40 backdrop-blur-xl rounded-3xl p-8 border border-white/30 dark:border-white/10 shadow-xl ring-1 ring-black/5">
-                            {/* Background Slideshow */}
+                            {/* Background Image */}
                             <div className="absolute inset-0 z-0 select-none pointer-events-none rounded-3xl overflow-hidden">
-                                <AnimatePresence mode="popLayout">
+                                {program?.imageUrl && (
                                     <motion.div
-                                        key={currentImageIndex}
                                         initial={{ opacity: 0 }}
-                                        animate={{ opacity: 0.15 }} // Reduced opacity for readability
-                                        exit={{ opacity: 0 }}
-                                        transition={{ duration: 1.5 }}
+                                        animate={{ opacity: 0.15 }}
+                                        transition={{ duration: 1 }}
                                         className="absolute inset-0 w-full h-full"
                                     >
                                         <Image
-                                            src={backgroundImages[currentImageIndex]}
+                                            src={program.imageUrl}
                                             fill
                                             className="object-cover grayscale contrast-125"
                                             alt=""
                                             priority
                                         />
-                                        {/* Gradient overlays */}
-                                        <div className="absolute inset-0 bg-gradient-to-b from-white/60 via-white/40 to-white/60 dark:from-slate-950/60 dark:via-slate-950/40 dark:to-slate-950/60" />
                                     </motion.div>
-                                </AnimatePresence>
+                                )}
+                                {/* Gradient overlays */}
+                                <div className="absolute inset-0 bg-gradient-to-b from-white/60 via-white/40 to-white/60 dark:from-slate-950/60 dark:via-slate-950/40 dark:to-slate-950/60" />
                             </div>
 
                             <div className="relative z-10">
                                 <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6">{t("highlights.title")}</h3>
                                 <ul className="space-y-4">
-                                    {highlights.map((item) => (
+                                    {highlights?.map((item: string) => (
                                         <li key={item} className="flex gap-3 items-center text-gray-700 dark:text-slate-300">
                                             <CheckCircle2 className="h-5 w-5 flex-none text-secondary" />
                                             {item}

@@ -40,11 +40,17 @@ export async function PUT(request: NextRequest) {
 
         const existing = await prisma.aboutContent.findFirst()
 
-        const content = await prisma.aboutContent.upsert({
-            where: { id: existing?.id || "default" },
-            update: validatedData,
-            create: validatedData
-        })
+        let content;
+        if (existing) {
+            content = await prisma.aboutContent.update({
+                where: { id: existing.id },
+                data: validatedData
+            })
+        } else {
+            content = await prisma.aboutContent.create({
+                data: validatedData
+            })
+        }
 
         return NextResponse.json(content)
     } catch (error: any) {

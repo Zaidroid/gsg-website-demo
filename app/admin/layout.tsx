@@ -20,7 +20,8 @@ import {
     X,
     Phone,
     Code,
-    Users
+    Users,
+    Handshake
 } from "lucide-react"
 import { Toaster } from "@/components/ui/toaster"
 import { motion, AnimatePresence } from "framer-motion"
@@ -76,7 +77,7 @@ function AdminLayoutContent({
             title: "Main",
             items: [
                 { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
-                { name: "Impact Stats", href: "/admin/impact", icon: BarChart3 },
+                { name: "Impact Stats", href: "/admin/impact-stats", icon: BarChart3 },
             ]
         },
         {
@@ -84,11 +85,13 @@ function AdminLayoutContent({
             items: [
                 { name: "Hero Section", href: "/admin/hero", icon: Image },
                 { name: "About Page", href: "/admin/about", icon: Phone },
+                { name: "Team Members", href: "/admin/team", icon: Users },
                 { name: "Programs", href: "/admin/programs", icon: Code },
                 { name: "Courses", href: "/admin/courses", icon: GraduationCap },
                 { name: "Events", href: "/admin/events", icon: Calendar },
                 { name: "Success Stories", href: "/admin/stories", icon: BookOpen },
                 { name: "Gallery", href: "/admin/gallery", icon: Image },
+                { name: "Partners", href: "/admin/partners", icon: Handshake },
             ]
         },
         {

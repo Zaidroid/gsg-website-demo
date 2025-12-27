@@ -1,6 +1,7 @@
 import { Hero } from "@/components/home/Hero"
 import { ProgramsGrid } from "@/components/home/ProgramsGrid"
 import { ImpactStats } from "@/components/home/ImpactStats"
+import { Partners } from "@/components/home/Partners"
 import prisma from "@/lib/prisma"
 
 // const CatalogueViewer = dynamic(() => import("@/components/CatalogueViewer"), {
@@ -13,11 +14,27 @@ export default async function Home() {
     orderBy: { updatedAt: 'desc' }
   });
 
+  const impactStats = await prisma.impactStat.findMany({
+    orderBy: { order: 'asc' },
+    where: { published: true }
+  });
+
+  const programs = await prisma.program.findMany({
+    where: { published: true, featured: true },
+    orderBy: { updatedAt: 'desc' } // or create an order field later
+  });
+
+  const partners = await prisma.partner.findMany({
+    where: { published: true },
+    orderBy: { order: 'asc' }
+  });
+
   return (
     <>
       <Hero heroData={heroData} />
-      <ProgramsGrid />
-      <ImpactStats />
+      <ProgramsGrid initialPrograms={programs} />
+      <ImpactStats initialStats={impactStats} />
+      <Partners partners={partners} />
       {/* Additional sections for Case Studies, Get Involved can go here */}
     </>
   )

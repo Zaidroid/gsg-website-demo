@@ -22,6 +22,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { TerminalSnippetEditor } from "@/components/admin/TerminalSnippetEditor"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 const formSchema = z.object({
@@ -37,7 +38,8 @@ const formSchema = z.object({
     secondaryCtaTextEn: z.string().optional(),
     secondaryCtaTextAr: z.string().optional(),
     secondaryCtaLink: z.string().optional(),
-    videoUrl: z.string().optional(),
+    terminalSnippetsEn: z.string().optional(),
+    terminalSnippetsAr: z.string().optional(),
 })
 
 export default function HeroManagerPage() {
@@ -62,6 +64,8 @@ export default function HeroManagerPage() {
             secondaryCtaTextAr: "",
             secondaryCtaLink: "",
             videoUrl: "",
+            terminalSnippetsEn: "",
+            terminalSnippetsAr: "",
         },
     })
 
@@ -78,6 +82,8 @@ export default function HeroManagerPage() {
                     ...data,
                     typewriterEn: Array.isArray(data.typewriterEn) ? data.typewriterEn.join(", ") : data.typewriterEn,
                     typewriterAr: Array.isArray(data.typewriterAr) ? data.typewriterAr.join(", ") : data.typewriterAr,
+                    terminalSnippetsEn: data.terminalSnippetsEn || "",
+                    terminalSnippetsAr: data.terminalSnippetsAr || "",
                 }
 
                 form.reset(formattedData)
@@ -99,6 +105,20 @@ export default function HeroManagerPage() {
     async function onSubmit(values: z.infer<typeof formSchema>) {
         setIsSaving(true)
         try {
+            // Validate JSON
+            try {
+                if (values.terminalSnippetsEn) JSON.parse(values.terminalSnippetsEn)
+                if (values.terminalSnippetsAr) JSON.parse(values.terminalSnippetsAr)
+            } catch (e) {
+                toast({
+                    title: "Validation Error",
+                    description: "Invalid JSON in Terminal Snippets. Please check syntax.",
+                    variant: "destructive",
+                })
+                setIsSaving(false)
+                return
+            }
+
             // Convert comma-separated strings back to arrays
             const payload = {
                 ...values,
@@ -213,6 +233,26 @@ export default function HeroManagerPage() {
                                             </FormItem>
                                         )}
                                     />
+
+                                    <FormField
+                                        control={form.control}
+                                        name="terminalSnippetsEn"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Terminal Scripts (English)</FormLabel>
+                                                <FormControl>
+                                                    <TerminalSnippetEditor
+                                                        value={field.value}
+                                                        onChange={field.onChange}
+                                                    />
+                                                </FormControl>
+                                                <FormDescription>
+                                                    Manage the code execution animation scripts shown in the terminal.
+                                                </FormDescription>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
                                 </CardContent>
                             </Card>
 
@@ -302,6 +342,27 @@ export default function HeroManagerPage() {
                                                     <Input placeholder="أطلق مشروعك, تعلم البرمجة" {...field} />
                                                 </FormControl>
                                                 <FormDescription>قائمة عبارات مفصولة بفواصل.</FormDescription>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+
+                                    <FormField
+                                        control={form.control}
+                                        name="terminalSnippetsAr"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Terminal Scripts (Arabic)</FormLabel>
+                                                <FormControl>
+                                                    <TerminalSnippetEditor
+                                                        value={field.value}
+                                                        onChange={field.onChange}
+                                                        dir="rtl"
+                                                    />
+                                                </FormControl>
+                                                <FormDescription>
+                                                    Manage the code execution animation scripts (ensure fields are compatible with code display).
+                                                </FormDescription>
                                                 <FormMessage />
                                             </FormItem>
                                         )}
