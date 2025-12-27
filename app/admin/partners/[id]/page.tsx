@@ -3,12 +3,13 @@ import { PartnerForm } from "@/components/admin/PartnerForm"
 import { notFound } from "next/navigation"
 
 interface PageProps {
-    params: { id: string }
+    params: Promise<{ id: string }>
 }
 
 export default async function EditPartnerPage({ params }: PageProps) {
+    const { id } = await params
     const partner = await prisma.partner.findUnique({
-        where: { id: params.id }
+        where: { id }
     })
 
     if (!partner) notFound()
