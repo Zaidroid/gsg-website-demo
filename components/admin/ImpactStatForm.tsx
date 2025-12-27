@@ -12,7 +12,7 @@ const formSchema = z.object({
     labelEn: z.string().min(1, "English label is required"),
     labelAr: z.string().min(1, "Arabic label is required"),
     value: z.string().min(1, "Value is required"),
-    order: z.number().default(0),
+    order: z.number(),
     published: z.boolean().default(true),
 })
 
