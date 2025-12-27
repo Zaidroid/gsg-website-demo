@@ -6,10 +6,11 @@ import { partnerSchema } from "@/lib/validations"
 
 export async function PATCH(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
         await requireAdmin()
+        const { id } = await params
         const body = await request.json()
 
         const validation = partnerSchema.safeParse(body)
@@ -21,7 +22,7 @@ export async function PATCH(
         }
 
         const partner = await prisma.partner.update({
-            where: { id: params.id },
+            where: { id },
             data: validation.data,
         })
 
@@ -37,12 +38,13 @@ export async function PATCH(
 
 export async function DELETE(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
         await requireAdmin()
+        const { id } = await params
         await prisma.partner.delete({
-            where: { id: params.id },
+            where: { id },
         })
 
         return NextResponse.json({ success: true })
