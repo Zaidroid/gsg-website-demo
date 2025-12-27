@@ -155,7 +155,7 @@ export const partnerSchema = z.object({
     logoUrl: z.string().min(1, "Logo image is required"),
     websiteUrl: z.string().url().optional().or(z.literal("")),
     category: z.string().default("General"),
-    order: z.coerce.number().int().default(0),
+    order: z.number().int().default(0),
     published: z.boolean().default(true),
 })
 
@@ -168,7 +168,7 @@ export const teamMemberSchema = z.object({
     bioAr: z.string().optional(),
     imageUrl: z.string().optional(),
     linkedinUrl: z.string().url().optional().or(z.literal("")),
-    order: z.coerce.number().int().default(0),
+    order: z.number().int().default(0),
     department: z.string().optional(),
     published: z.boolean().default(true),
 })
