@@ -29,8 +29,22 @@ export async function POST(request: NextRequest) {
         const body = await request.json()
         const validatedData = programSchema.parse(body)
 
+        // Ensure optional fields that are required in DB as strings are not null/undefined
+        const dataToCreate = {
+            ...validatedData,
+            ctaLink: validatedData.ctaLink || "",
+            imageUrl: validatedData.imageUrl || null, // imageUrl is optional in DB, so null is fine? Wait, schema says String?
+        }
+
+        // Wait, let's double check prisma schema again. 
+        // imageUrl String? (Optional) -> null is fine.
+        // ctaLink String (Required) -> null/undefined is NOT fine.
+
         const program = await prisma.program.create({
-            data: validatedData,
+            data: {
+                ...dataToCreate,
+                // Explicitly handle fields if needed, but the spread above with override should work
+            },
         })
 
         return NextResponse.json(program, { status: 201 })
