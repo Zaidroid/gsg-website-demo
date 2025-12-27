@@ -16,9 +16,14 @@ export async function PATCH(
         const body = await request.json()
         const validatedData = programSchema.partial().parse(body)
 
+        // Remove null values to avoid Prisma type errors (Prisma update input doesn't accept null for optional fields in some cases or required fields)
+        const dataToUpdate = Object.fromEntries(
+            Object.entries(validatedData).filter(([_, v]) => v !== null)
+        )
+
         const program = await prisma.program.update({
             where: { id },
-            data: validatedData,
+            data: dataToUpdate,
         })
 
         return NextResponse.json(program)
