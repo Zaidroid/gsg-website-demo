@@ -18,7 +18,8 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
                     access_type: "offline",
                     response_type: "code"
                 }
-            }
+            },
+            allowDangerousEmailAccountLinking: true,
         })
     )
 }
