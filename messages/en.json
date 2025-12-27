@@ -424,5 +424,81 @@
                 "action": "Join Us"
             }
         }
+    },
+    "DonatePage": {
+        "header": {
+            "title": "Get Involved",
+            "subtitle": "Help us accelerate Palestine's tech sector and the leaders of tomorrow."
+        },
+        "mercy_corps": {
+            "title": "A Program of Mercy Corps",
+            "description": "Gaza Sky Geeks is a program of Mercy Corps, a 501(c)3 non-profit. Your support empowers the next generation of Palestine’s founders, freelancers, and coders. Donations are tax-deductible to the extent allowed by law in the USA and EU."
+        },
+        "impact_stats": {
+            "title": "Our Collective Impact",
+            "participants": "60K+ participants trained",
+            "graduates": "4.5K+ graduates annually",
+            "income": "100% avg income increase",
+            "employment": "85% employment rate"
+        },
+        "impact": {
+            "title": "How Your Donation Helps",
+            "subtitle": "Your contribution directly supports our community hubs and training programs.",
+            "cta": "Donate Now",
+            "tiers": {
+                "100": {
+                    "amount": "$100",
+                    "description": "Keep coworking spaces running (light and electricity) for hundreds of workers for one day."
+                },
+                "350": {
+                    "amount": "$350",
+                    "description": "Support an aspiring freelancer through the entire Freelance Academy program."
+                },
+                "500": {
+                    "amount": "$500",
+                    "description": "Pay the full cost of tuition and expenses to train one full-stack developer."
+                },
+                "1000": {
+                    "amount": "$1,000",
+                    "description": "Support a weekend-long hackathon focused on promoting female participation in tech."
+                },
+                "5000": {
+                    "amount": "$5,000",
+                    "description": "Fund a three-month international residency program for a startup team to pitch to global investors."
+                }
+            }
+        },
+        "ways": {
+            "title": "More Ways to Help",
+            "mentor": {
+                "title": "Become a Mentor",
+                "description": "Share your expertise with our founders and freelancers.",
+                "cta": "Apply as Mentor"
+            },
+            "hire": {
+                "title": "Hire Talent",
+                "description": "Access a pipeline of world-class developers and designers.",
+                "cta": "Meet Our Grads"
+            }
+        },
+        "press": {
+            "title": "As Featured In"
+        },
+        "other_ways": {
+            "title": "Institutional Support",
+            "subtitle": "Support us through wire transfers, checks, or in-kind services.",
+            "wire": {
+                "title": "Wire Transfer",
+                "description": "Please contact us for bank details and routing information."
+            },
+            "check": {
+                "title": "Mail a Check",
+                "description": "Checks can be made out to Mercy Corps with 'Fund Code 32607' in the memo."
+            },
+            "sponsorship": {
+                "title": "Corporate Sponsorship",
+                "description": "Partner with us to provide software, services, or funding for our academies."
+            }
+        }
     }
 }
