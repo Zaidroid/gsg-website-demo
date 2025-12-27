@@ -13,7 +13,7 @@ const formSchema = z.object({
     labelAr: z.string().min(1, "Arabic label is required"),
     value: z.string().min(1, "Value is required"),
     order: z.number(),
-    published: z.boolean().default(true),
+    published: z.boolean(),
 })
 
 type ImpactStatFormValues = z.infer<typeof formSchema>
