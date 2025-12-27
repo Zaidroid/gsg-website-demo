@@ -11,7 +11,18 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'utfs.io',
       },
+      {
+        protocol: 'https',
+        hostname: 'gsg.zaidlab.xyz',
+      },
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+      }
     ],
+    dangerouslyAllowSVG: true,
+    contentDispositionType: 'attachment',
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
   reactCompiler: true,
   webpack: (config) => {
