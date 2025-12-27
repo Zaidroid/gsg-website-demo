@@ -205,7 +205,7 @@ export function HeroVisual({ snippets }: HeroVisualProps) {
                                                 key={idx}
                                                 initial={{ opacity: 0, x: -10 }}
                                                 animate={{ opacity: 1, x: 0 }}
-                                                animate={{ opacity: 1, x: 0 }}
+
                                                 transition={{ duration: 0.2 }}
                                                 className={`
                                                     ${line.startsWith('→') ? 'text-blue-600 dark:text-blue-400' : ''}
