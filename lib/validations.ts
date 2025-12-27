@@ -154,7 +154,7 @@ export const partnerSchema = z.object({
     nameAr: z.string().min(1, "Arabic name is required"),
     logoUrl: z.string().min(1, "Logo image is required"),
     websiteUrl: z.string().url().optional().or(z.literal("")),
-    category: z.string().default("General"),
+    category: z.string(),
     order: z.number().int(),
     published: z.boolean(),
 })
