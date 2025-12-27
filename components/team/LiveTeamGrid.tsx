@@ -24,9 +24,10 @@ interface TeamMember {
 
 interface LiveTeamGridProps {
     initialMembers: TeamMember[]
+    showControls?: boolean
 }
 
-export function LiveTeamGrid({ initialMembers }: LiveTeamGridProps) {
+export function LiveTeamGrid({ initialMembers, showControls = true }: LiveTeamGridProps) {
     const locale = useLocale()
     const isAr = locale === 'ar'
     const [searchQuery, setSearchQuery] = useState("")
@@ -65,59 +66,61 @@ export function LiveTeamGrid({ initialMembers }: LiveTeamGridProps) {
     return (
         <div className="w-full space-y-12">
             {/* Controls Bar */}
-            <div className="relative mx-auto max-w-7xl px-6 lg:px-8 pt-6 z-30">
-                <motion.div
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    className="rounded-2xl bg-white dark:bg-slate-900 shadow-xl border border-gray-100 dark:border-slate-800 p-4 flex flex-col md:flex-row gap-6 justify-between items-center"
-                >
-                    {/* Search */}
-                    <div className="relative w-full md:max-w-xl group">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-gsg-teal transition-colors" />
-                        <input
-                            type="text"
-                            placeholder={isAr ? "ابحث عن عضو فريق..." : "Search by name or role..."}
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            className={cn(
-                                "w-full pl-12 pr-4 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-800 border-transparent focus:bg-white dark:focus:bg-slate-900 transition-all outline-none ring-2 ring-transparent focus:ring-gsg-teal/20 font-medium",
-                                isAr && "text-right pr-12 pl-4"
-                            )}
-                            dir={isAr ? "rtl" : "ltr"}
-                        />
-                    </div>
-
-                    {/* View Toggles & Stats */}
-                    <div className="flex items-center gap-6 w-full md:w-auto justify-between md:justify-end text-sm text-gray-500">
-                        <div className="flex items-center gap-2 pl-4 border-l border-gray-100 dark:border-slate-800">
-                            <Users className="w-4 h-4 text-gsg-teal" />
-                            <span className="font-bold text-gsg-navy dark:text-white">{filteredMembers.length}</span>
-                            <span className="hidden sm:inline">{isAr ? "عضو" : "Members"}</span>
+            {showControls && (
+                <div className="relative mx-auto max-w-7xl px-6 lg:px-8 pt-6 z-30">
+                    <motion.div
+                        initial={{ y: 20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        className="rounded-2xl bg-white dark:bg-slate-900 shadow-xl border border-gray-100 dark:border-slate-800 p-4 flex flex-col md:flex-row gap-6 justify-between items-center"
+                    >
+                        {/* Search */}
+                        <div className="relative w-full md:max-w-xl group">
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-gsg-teal transition-colors" />
+                            <input
+                                type="text"
+                                placeholder={isAr ? "ابحث عن عضو فريق..." : "Search by name or role..."}
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                className={cn(
+                                    "w-full pl-12 pr-4 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-800 border-transparent focus:bg-white dark:focus:bg-slate-900 transition-all outline-none ring-2 ring-transparent focus:ring-gsg-teal/20 font-medium",
+                                    isAr && "text-right pr-12 pl-4"
+                                )}
+                                dir={isAr ? "rtl" : "ltr"}
+                            />
                         </div>
 
-                        <div className="flex bg-gray-100 dark:bg-slate-800 p-1 rounded-xl">
-                            <button
-                                onClick={() => setViewMode("grid")}
-                                className={cn(
-                                    "p-2.5 rounded-lg transition-all",
-                                    viewMode === "grid" ? "bg-white dark:bg-slate-700 shadow-sm text-gsg-teal" : "hover:text-gray-700"
-                                )}
-                            >
-                                <Grid className="w-4 h-4" />
-                            </button>
-                            <button
-                                onClick={() => setViewMode("list")}
-                                className={cn(
-                                    "p-2.5 rounded-lg transition-all",
-                                    viewMode === "list" ? "bg-white dark:bg-slate-700 shadow-sm text-gsg-teal" : "hover:text-gray-700"
-                                )}
-                            >
-                                <ListIcon className="w-4 h-4" />
-                            </button>
+                        {/* View Toggles & Stats */}
+                        <div className="flex items-center gap-6 w-full md:w-auto justify-between md:justify-end text-sm text-gray-500">
+                            <div className="flex items-center gap-2 pl-4 border-l border-gray-100 dark:border-slate-800">
+                                <Users className="w-4 h-4 text-gsg-teal" />
+                                <span className="font-bold text-gsg-navy dark:text-white">{filteredMembers.length}</span>
+                                <span className="hidden sm:inline">{isAr ? "عضو" : "Members"}</span>
+                            </div>
+
+                            <div className="flex bg-gray-100 dark:bg-slate-800 p-1 rounded-xl">
+                                <button
+                                    onClick={() => setViewMode("grid")}
+                                    className={cn(
+                                        "p-2.5 rounded-lg transition-all",
+                                        viewMode === "grid" ? "bg-white dark:bg-slate-700 shadow-sm text-gsg-teal" : "hover:text-gray-700"
+                                    )}
+                                >
+                                    <Grid className="w-4 h-4" />
+                                </button>
+                                <button
+                                    onClick={() => setViewMode("list")}
+                                    className={cn(
+                                        "p-2.5 rounded-lg transition-all",
+                                        viewMode === "list" ? "bg-white dark:bg-slate-700 shadow-sm text-gsg-teal" : "hover:text-gray-700"
+                                    )}
+                                >
+                                    <ListIcon className="w-4 h-4" />
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                </motion.div>
-            </div>
+                    </motion.div>
+                </div>
+            )}
 
             {/* Grid/List View */}
             <div className="mx-auto max-w-7xl px-6 lg:px-8 min-h-[60vh]">

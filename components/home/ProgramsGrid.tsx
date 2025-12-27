@@ -1,45 +1,40 @@
 "use client"
 
-import { ArrowRight, TrendingUp, Users, Briefcase, Building2, Code, Zap } from "lucide-react"
+import { ArrowRight } from "lucide-react"
 import { motion } from "framer-motion"
 import { Link } from "@/src/i18n/routing"
 import { useTranslations, useLocale } from "next-intl"
+import { cn } from "@/lib/utils"
 
 interface ProgramsGridProps {
     minimal?: boolean
     initialPrograms?: any[]
 }
 
-const STYLE_MAP: Record<string, { icon: any, color: string, hoverColor: string }> = {
+const STYLE_MAP: Record<string, { accent: string, borderHover: string }> = {
     "elevate": {
-        icon: TrendingUp,
-        color: "bg-purple-100/30 text-purple-900 dark:bg-purple-900/30 dark:text-purple-100",
-        hoverColor: "group-hover:bg-purple-200/40 dark:group-hover:bg-purple-800/40"
+        accent: "bg-purple-500",
+        borderHover: "group-hover:border-purple-500/30 dark:group-hover:border-purple-500/30"
     },
     "individuals": {
-        icon: Users,
-        color: "bg-blue-100/30 text-blue-900 dark:bg-blue-900/30 dark:text-blue-100",
-        hoverColor: "group-hover:bg-blue-200/40 dark:group-hover:bg-blue-800/40"
+        accent: "bg-blue-500",
+        borderHover: "group-hover:border-blue-500/30 dark:group-hover:border-blue-500/30"
     },
     "employability": {
-        icon: Briefcase,
-        color: "bg-green-100/30 text-green-900 dark:bg-green-900/30 dark:text-green-100",
-        hoverColor: "group-hover:bg-green-200/40 dark:group-hover:bg-green-800/40"
+        accent: "bg-green-500",
+        borderHover: "group-hover:border-green-500/30 dark:group-hover:border-green-500/30"
     },
     "coworking": {
-        icon: Building2,
-        color: "bg-orange-100/30 text-orange-900 dark:bg-orange-900/30 dark:text-orange-100",
-        hoverColor: "group-hover:bg-orange-200/40 dark:group-hover:bg-orange-800/40"
+        accent: "bg-orange-500",
+        borderHover: "group-hover:border-orange-500/30 dark:group-hover:border-orange-500/30"
     },
     "code-academy": {
-        icon: Code,
-        color: "bg-teal-100/30 text-teal-900 dark:bg-teal-900/30 dark:text-teal-100",
-        hoverColor: "group-hover:bg-teal-200/40 dark:group-hover:bg-teal-800/40"
+        accent: "bg-teal-500",
+        borderHover: "group-hover:border-teal-500/30 dark:group-hover:border-teal-500/30"
     },
     "default": {
-        icon: Zap,
-        color: "bg-gray-100/30 text-gray-900 dark:bg-gray-800/30 dark:text-gray-100",
-        hoverColor: "group-hover:bg-gray-200/40 dark:group-hover:bg-gray-700/40"
+        accent: "bg-gsg-teal",
+        borderHover: "group-hover:border-gsg-teal/30 dark:group-hover:border-gsg-teal/30"
     }
 }
 
@@ -54,53 +49,40 @@ export function ProgramsGrid({ minimal = false, initialPrograms = [] }: Programs
         return {
             name: isAr ? p.titleAr : p.titleEn,
             description: isAr ? p.headerDescAr : p.headerDescEn,
-            icon: style.icon,
             href: `/programs/${p.programId}`,
-            color: style.color,
-            hoverColor: style.hoverColor
+            accent: style.accent,
+            borderHover: style.borderHover
         }
     }) : [
         // Static fallback if no DB data
         {
             name: t("items.elevate.name"),
             description: t("items.elevate.description"),
-            icon: TrendingUp,
             href: "/programs/elevate",
-            color: "bg-purple-100/30 text-purple-900 dark:bg-purple-900/30 dark:text-purple-100",
-            hoverColor: "group-hover:bg-purple-200/40 dark:group-hover:bg-purple-800/40",
-            programId: "elevate"
+            ...STYLE_MAP["elevate"]
         },
         {
             name: t("items.individuals.name"),
             description: t("items.individuals.description"),
-            icon: Users,
             href: "/programs/individuals",
-            color: "bg-blue-100/30 text-blue-900 dark:bg-blue-900/30 dark:text-blue-100",
-            hoverColor: "group-hover:bg-blue-200/40 dark:group-hover:bg-blue-800/40",
-            programId: "individuals"
+            ...STYLE_MAP["individuals"]
         },
         {
             name: t("items.employability.name"),
             description: t("items.employability.description"),
-            icon: Briefcase,
             href: "/programs/employability",
-            color: "bg-green-100/30 text-green-900 dark:bg-green-900/30 dark:text-green-100",
-            hoverColor: "group-hover:bg-green-200/40 dark:group-hover:bg-green-800/40",
-            programId: "employability"
+            ...STYLE_MAP["employability"]
         },
         {
             name: t("items.coworking.name"),
             description: t("items.coworking.description"),
-            icon: Building2,
             href: "/programs/coworking",
-            color: "bg-orange-100/30 text-orange-900 dark:bg-orange-900/30 dark:text-orange-100",
-            hoverColor: "group-hover:bg-orange-200/40 dark:group-hover:bg-orange-800/40",
-            programId: "coworking"
+            ...STYLE_MAP["coworking"]
         },
     ]
 
     return (
-        <div className={minimal ? "" : "bg-transparent py-24 sm:py-32 relative z-0 transition-colors duration-300"}>
+        <div className={minimal ? "" : "bg-transparent py-20 sm:py-32 relative z-0"}>
             <div className="mx-auto max-w-7xl px-6 lg:px-8">
                 {!minimal && (
                     <div className="mx-auto max-w-2xl text-center mb-16 relative z-10">
@@ -109,48 +91,68 @@ export function ProgramsGrid({ minimal = false, initialPrograms = [] }: Programs
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.5 }}
-                            className="text-3xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-gsg-orange to-gsg-orange-light sm:text-4xl drop-shadow-md pb-2"
+                            className="text-3xl font-bold tracking-tight text-gsg-navy dark:text-white sm:text-4xl"
                         >
                             {t("title")}
                         </motion.h2>
+                        <div className="mt-4 h-1 w-16 mx-auto bg-gsg-teal rounded-full" />
                         <motion.p
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.5, delay: 0.1 }}
-                            className="mt-6 text-lg leading-8 text-gray-700 dark:text-slate-200 drop-shadow-sm font-medium"
+                            className="mt-6 text-lg leading-8 text-slate-600 dark:text-slate-400 max-w-2xl mx-auto"
                         >
                             {t("subtitle")}
                         </motion.p>
                     </div>
                 )}
-                <div className="mx-auto grid max-w-2xl grid-cols-1 gap-6 md:grid-cols-2 md:max-w-none lg:grid-cols-4 lg:gap-8">
+
+                <div className="mx-auto grid max-w-2xl grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4 md:max-w-none">
                     {programs.map((program, index) => (
                         <motion.div
                             key={program.name}
-                            initial={{ opacity: 0, y: 30 }}
+                            initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ delay: index * 0.1, duration: 0.5 }}
-                            whileHover={{ y: -8, boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)" }}
-                            className="flex flex-col relative overflow-hidden rounded-3xl bg-white/20 dark:bg-slate-900/40 backdrop-blur-xl shadow-xl border border-white/30 dark:border-slate-700/30 group cursor-pointer transition-all duration-300 ring-1 ring-black/5 dark:ring-white/5"
+                            className="group h-full"
                         >
-                            <Link href={program.href} className="flex-1 flex flex-col p-6 sm:p-8 relative z-10">
-                                <div className={`mb-6 inline-flex rounded-2xl p-4 ${program.color} ${program.hoverColor} backdrop-blur-md shadow-inner transition-all duration-300 w-fit ring-1 ring-black/5 dark:ring-white/5`}>
-                                    <program.icon className="h-8 w-8" aria-hidden="true" />
+                            <Link
+                                href={program.href}
+                                className={cn(
+                                    "relative flex flex-col h-full p-8 rounded-2xl bg-white/40 dark:bg-slate-900/40 backdrop-blur-xl border border-white/40 dark:border-white/10 shadow-sm transition-all duration-300 hover:shadow-2xl hover:shadow-gsg-teal/5 hover:-translate-y-1",
+                                    program.borderHover
+                                )}
+                            >
+                                <div className="flex flex-col h-full relative z-10">
+                                    {/* Thematic Accent Bar */}
+                                    <div className={cn(
+                                        "w-12 h-1.5 rounded-full mb-8 transition-all duration-300 group-hover:w-20",
+                                        program.accent
+                                    )} />
+
+                                    {/* Text Content */}
+                                    <h3 className="mb-4 text-2xl font-bold text-gsg-navy dark:text-white group-hover:text-gsg-teal transition-colors leading-tight">
+                                        {program.name}
+                                    </h3>
+
+                                    <p className="mb-8 text-sm leading-relaxed text-slate-500 dark:text-slate-400 flex-grow font-medium line-clamp-3">
+                                        {program.description}
+                                    </p>
+
+                                    {/* Professional Footer */}
+                                    <div className="flex items-center text-xs font-bold uppercase tracking-wider text-gsg-navy dark:text-gsg-teal/80 group-hover:text-gsg-teal transition-all">
+                                        {t("learn_more")}
+                                        <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                                    </div>
                                 </div>
-                                <h3 className="mb-3 text-2xl font-bold text-primary dark:text-white group-hover:text-secondary transition-colors duration-300 drop-shadow-sm">{program.name}</h3>
-                                <p className="mb-8 text-base leading-7 text-gray-700 dark:text-slate-200 flex-grow font-medium line-clamp-3">{program.description}</p>
-                                <div
-                                    className="inline-flex items-center gap-2 font-bold text-secondary hover:text-secondary/80 transition-colors mt-auto"
-                                >
-                                    {t("learn_more")}
-                                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+
+                                {/* Minimalist highlight instead of big glow */}
+                                <div className="absolute top-0 right-0 p-1 opacity-0 group-hover:opacity-100 transition-all duration-500">
+                                    <div className="w-10 h-10 rounded-bl-3xl border-t border-r border-gsg-teal/30" />
                                 </div>
                             </Link>
-
-                            {/* Decorative background circle */}
-                            <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-gradient-to-br from-white/30 to-transparent dark:from-slate-700/30 rounded-full z-0 group-hover:scale-150 transition-transform duration-500 ease-out opacity-40 blur-2xl pointer-events-none" />
                         </motion.div>
                     ))}
                 </div>
