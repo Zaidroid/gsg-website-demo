@@ -38,6 +38,7 @@ const formSchema = z.object({
     secondaryCtaTextEn: z.string().optional(),
     secondaryCtaTextAr: z.string().optional(),
     secondaryCtaLink: z.string().optional(),
+    videoUrl: z.string().optional(),
     terminalSnippetsEn: z.string().optional(),
     terminalSnippetsAr: z.string().optional(),
 })
