@@ -22,18 +22,7 @@ const formSchema = z.object({
     published: z.boolean(),
 })
 
-interface EventFormValues {
-    eventId: string
-    titleEn: string
-    titleAr: string
-    descriptionEn: string
-    descriptionAr: string
-    date: string
-    location: string
-    type: string
-    status: string
-    published: boolean
-}
+type EventFormValues = z.infer<typeof formSchema>
 
 interface EventFormProps {
     initialData?: any // Event type from prisma

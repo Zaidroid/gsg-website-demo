@@ -24,19 +24,7 @@ const formSchema = z.object({
     published: z.boolean(),
 })
 
-interface CourseFormValues {
-    courseId: string
-    titleEn: string
-    titleAr: string
-    descriptionEn: string
-    descriptionAr: string
-    category: string
-    level: string
-    duration: string
-    startDate: string
-    status: string
-    published: boolean
-}
+type CourseFormValues = z.infer<typeof formSchema>
 
 interface CourseFormProps {
     initialData?: any // Course type from prisma

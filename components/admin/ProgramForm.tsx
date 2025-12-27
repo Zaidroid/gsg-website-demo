@@ -31,25 +31,7 @@ const formSchema = z.object({
     published: z.boolean(),
 })
 
-interface ProgramFormValues {
-    programId: string
-    titleEn: string
-    titleAr: string
-    headerDescEn: string
-    headerDescAr: string
-    contentTitleEn: string
-    contentTitleAr: string
-    contentDescEn: string
-    contentDescAr: string
-    highlightsEn: string[]
-    highlightsAr: string[]
-    ctaTextEn: string
-    ctaTextAr: string
-    ctaLink?: string | null
-    imageUrl?: string | null
-    featured: boolean
-    published: boolean
-}
+type ProgramFormValues = z.infer<typeof formSchema>
 
 interface ProgramFormProps {
     initialData?: any // Program type from prisma
